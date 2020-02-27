@@ -4,13 +4,6 @@
     width: 100%;
 }
 
-#loginCard {
-    left: 50%;
-    top: 250px;
-    
-    
-}
-
 /*Titel der Card zentrieren*/
 #cardTitleLogin {
     text-align: center;
@@ -23,11 +16,14 @@ html, body {
 }
 
 /*Hintergrundbild*/
-.backgroundWatch {    
+.backgroundWatch {
+    position: absolute;
     background-image: url(../img/background.webp);
     background-repeat: no-repeat;
     background-size: cover;
     background-position: center;
+    height: 100%;
+    width: 100%;
 }
 
 .transparentLayer {
@@ -40,7 +36,22 @@ html, body {
     height: 100%;
 }
 
-.test {
+.loginInputs {
     width: 50%;
     left: 25%;
+}
+
+.logout {
+    position: absolute;
+    top: 0;
+    right: 4px;
+}
+
+/*Login Formular und Übersicht zentrieren
+Quelle: https://css-tricks.com/centering-css-complete-guide/ */
+.centerMid {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
 }

@@ -68,41 +68,48 @@ if(isset($_POST["username"]) && isset($_POST["password"])){
     <link rel="stylesheet" href="assets/css/stylesheet.css" />
   </head>
   <body class="backgroundWatch">
-      
       <div class="transparentLayer">
+          <!--   Halb-transparente Schicht über Hintergrund
+                 Quelle: https://stackoverflow.com/questions/9182978/semi-transparent-color-layer-over-background-image   -->
       </div>
       
       
-      <!--   Card   -->
-      <div class="col-md-6">
-          <div class="card" id="loginCard">
-              <div class="card-header card-header-text card-header-primary">
-                <div class="card-text">
-                  <h4 class="card-title" id="cardTitleLogin">Here is the Text - Login</h4>
-                </div>
-              </div>
-              <div class="card-body">
-                    <!--    Login-Formular  -->
-                    <form name="login" action="login.php" method="POST" data-ajax="false">
-                      <div class="form-group test">
-                        <label for="inputUsername">Benutzername</label>
-                          <!--  Feld ausfüllen, falls der Benutzername schon eingegeben wurde-->
-                        <input type="text" class="form-control" name="username" <?php if(isset($_POST["username"])){echo 'value="' . $_POST['username'] . '"';}?>>
-                      </div>
-                      <div class="form-group test">
-                        <label for="inputPassword">Kennwort</label>
-                        <input type="password" class="form-control" name="password">
-                      </div>
-                      <!--  Login-Button, muss in der Mitte sein
-                            Quelle: https://stackoverflow.com/questions/4221263/center-form-submit-buttons-html-css-->
-                      <div class="buttonHolder" align="center">
-                        <input type="submit" class="btn btn-primary" value="Login">
-                      </div>
-                    </form>
-                    <!--    Login-Formular Ende-->
+      <div class="container centerMid">
+        <div class="row align-items-center">
+          <div class="col"></div>
+          <!--   Card   -->
+          <div class="col-md-10">
+              <div class="card">
+                  <div class="card-header card-header-text card-header-primary">
+                    <div class="card-text">
+                      <h4 class="card-title" id="cardTitleLogin">Here is the Text - Login</h4>
+                    </div>
+                  </div>
+                  <div class="card-body">
+                        <!--    Login-Formular  -->
+                        <form name="login" action="login.php" method="POST" data-ajax="false">
+                          <div class="form-group loginInputs">
+                            <label for="inputUsername">Benutzername</label>
+                              <!--  Feld ausfüllen, falls der Benutzername schon eingegeben wurde-->
+                            <input type="text" class="form-control" name="username" <?php if(isset($_POST["username"])){echo 'value="' . $_POST['username'] . '"';}?>>
+                          </div>
+                          <div class="form-group loginInputs">
+                            <label for="inputPassword">Kennwort</label>
+                            <input type="password" class="form-control" name="password">
+                          </div>
+                          <!--  Login-Button, muss in der Mitte sein
+                                Quelle: https://stackoverflow.com/questions/4221263/center-form-submit-buttons-html-css-->
+                          <div class="buttonHolder" align="center">
+                            <input type="submit" class="btn btn-primary" value="Login">
+                          </div>
+                        </form>
+                        <!--    Login-Formular Ende-->
+                  </div>
               </div>
           </div>
+          <!--   Card Ende   -->
+          <div class="col"></div>
+        </div>
       </div>
-      <!--   Card Ende   -->
   </body>
 </html>
