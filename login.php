@@ -41,6 +41,7 @@ if(isset($_POST["username"]) && isset($_POST["password"])){
         
         //Login erfolgreich, schreibe wichtige Infos in Session-Variable
         $_SESSION["username"] = $username;
+        $_SESSION["access_token"] = $responseArray['access_token'];
         
         //Rolle wird gespeichert, damit Berechtigungsstufe greifen kann
         $_SESSION["role"] = $responseArray['role'];
@@ -48,7 +49,6 @@ if(isset($_POST["username"]) && isset($_POST["password"])){
         //Umleiten auf die Übersicht
         header("Location: uebersicht.php");
     }
-    echo "<script>console.log('" . $response . "');</script>";
     
 }
 ?>
@@ -67,30 +67,36 @@ if(isset($_POST["username"]) && isset($_POST["password"])){
     <!-- Eigenes CSS einbinden -->
     <link rel="stylesheet" href="assets/css/stylesheet.css" />
   </head>
-  <body>
+  <body class="backgroundWatch">
+      
+      <div class="transparentLayer">
+      </div>
+      
+      
       <!--   Card   -->
       <div class="col-md-6">
           <div class="card" id="loginCard">
               <div class="card-header card-header-text card-header-primary">
                 <div class="card-text">
-                  <h4 class="card-title" id="cardTitleLogin">Here is the Text</h4>
+                  <h4 class="card-title" id="cardTitleLogin">Here is the Text - Login</h4>
                 </div>
               </div>
               <div class="card-body">
                     <!--    Login-Formular  -->
                     <form name="login" action="login.php" method="POST" data-ajax="false">
-                      <div class="form-group">
+                      <div class="form-group test">
                         <label for="inputUsername">Benutzername</label>
                           <!--  Feld ausfüllen, falls der Benutzername schon eingegeben wurde-->
                         <input type="text" class="form-control" name="username" <?php if(isset($_POST["username"])){echo 'value="' . $_POST['username'] . '"';}?>>
                       </div>
-                      <div class="form-group">
+                      <div class="form-group test">
                         <label for="inputPassword">Kennwort</label>
                         <input type="password" class="form-control" name="password">
                       </div>
-                      <!--  Login-Button, muss in der Mitte sein-->
+                      <!--  Login-Button, muss in der Mitte sein
+                            Quelle: https://stackoverflow.com/questions/4221263/center-form-submit-buttons-html-css-->
                       <div class="buttonHolder" align="center">
-                        <input type="submit" class="btn btn-primary" value="Login" id="loginButton">
+                        <input type="submit" class="btn btn-primary" value="Login">
                       </div>
                     </form>
                     <!--    Login-Formular Ende-->
