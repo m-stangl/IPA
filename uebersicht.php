@@ -31,8 +31,8 @@ if(!isset($_SESSION["access_token"])){
   </head>
   <body class="backgroundWatch">
       <div class="transparentLayer">
-          <!--   Halb-transparente Schicht über Hintergrund
-                 Quelle: https://stackoverflow.com/questions/9182978/semi-transparent-color-layer-over-background-image   -->
+      <!--   Halb-transparente Schicht über Hintergrund
+             Quelle: https://stackoverflow.com/questions/9182978/semi-transparent-color-layer-over-background-image   -->
       </div>
       
       <!--   Beginn der Übersicht   -->
@@ -42,12 +42,16 @@ if(!isset($_SESSION["access_token"])){
               <div class="card">
                   <div class="card-header card-header-text card-header-primary">
                     <div class="card-text">
-                      <h4 class="card-title">Here is the Text</h4>
+                      <h4 class="card-title">Seriennummern</h4>
                       <a href="serialNr.php" class="stretched-link"></a>
                     </div>
                   </div>
                   <div class="card-body">
-                      The place is close to Barceloneta Beach and bus stop just 2 min by walk and near to "Naviglio" where you can enjoy the main night life in Barcelona...
+                      Seriennummer suchen
+                      <br>
+                      Status wechseln
+                      <br>
+                      Lagerort wechseln
                       <a href="serialNr.php" class="stretched-link"></a>
                   </div>
               </div>
@@ -56,12 +60,14 @@ if(!isset($_SESSION["access_token"])){
               <div class="card">
                   <div class="card-header card-header-text card-header-primary">
                     <div class="card-text">
-                      <h4 class="card-title">Here is the Text</h4>
+                      <h4 class="card-title">Anlagenummern</h4>
                       <a href="assetNr.php" class="stretched-link"></a>
                     </div>
                   </div>
                   <div class="card-body">
-                      The place is close to Barceloneta Beach and bus stop just 2 min by walk and near to "Naviglio" where you can enjoy the main night life in Barcelona...
+                      Anlagenummer suchen
+                      <br>
+                      Geräte auflisten<br><br>
                       <a href="assetNr.php" class="stretched-link"></a>
                   </div>
               </div>
@@ -70,12 +76,13 @@ if(!isset($_SESSION["access_token"])){
               <div class="card">
                   <div class="card-header card-header-text card-header-primary">
                     <div class="card-text">
-                      <h4 class="card-title">Here is the Text</h4>
+                      <h4 class="card-title">Reports</h4>
                       <a href="report.php" class="stretched-link"></a>
                     </div>
                   </div>
                   <div class="card-body">
-                      The place is close to Barceloneta Beach and bus stop just 2 min by walk and near to "Naviglio" where you can enjoy the main night life in Barcelona...
+                      Anlagenummern mit Status Extern auflisten
+                      <br><br><br>
                       <a href="report.php" class="stretched-link"></a>
                   </div>
               </div>
