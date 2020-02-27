@@ -84,12 +84,12 @@ if(isset($_POST["username"]) && isset($_POST["password"])){
               <div class="card-body">
                     <!--    Login-Formular  -->
                     <form name="login" action="login.php" method="POST" data-ajax="false">
-                      <div class="form-group test">
+                      <div class="form-group loginInputs">
                         <label for="inputUsername">Benutzername</label>
                           <!--  Feld ausfüllen, falls der Benutzername schon eingegeben wurde-->
                         <input type="text" class="form-control" name="username" <?php if(isset($_POST["username"])){echo 'value="' . $_POST['username'] . '"';}?>>
                       </div>
-                      <div class="form-group test">
+                      <div class="form-group loginInputs">
                         <label for="inputPassword">Kennwort</label>
                         <input type="password" class="form-control" name="password">
                       </div>

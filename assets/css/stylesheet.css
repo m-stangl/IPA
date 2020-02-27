@@ -40,7 +40,13 @@ html, body {
     height: 100%;
 }
 
-.test {
+.loginInputs {
     width: 50%;
     left: 25%;
+}
+
+.logout {
+    position: absolute;
+    top: 0;
+    right: 4px;
 }
