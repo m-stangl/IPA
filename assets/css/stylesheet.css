@@ -1,0 +1,19 @@
+/* Eigene CSS-Datei für Anpassungen */
+
+.card-text {
+    width: 100%;
+}
+
+#loginCard {
+    left: 50%;
+    top: 250px;
+    
+}
+
+#loginButton {
+    margin: 5 auto;
+}
+
+#cardTitleLogin {
+    text-align: center;
+}
