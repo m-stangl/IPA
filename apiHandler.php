@@ -20,6 +20,24 @@ if(isset($_POST["task"]) && $_POST["task"] == "getDetails"){
     
     //getDetails ausführen mit den Argumenten "access_token" und "serialNr"
     getDetails($access_token, $serialNr);
+}elseif(isset($_POST["task"]) && $_POST["task"] == "postDetails"){
+    
+    //Details auslesen, da sie der Funktion übergeben werden müssen
+    $serialId = $_POST["serialId"];
+    $statusId = $_POST["statusId"];
+    $lagerortId = $_POST["lagerortId"];
+    $tagId = $_POST["tagId"];
+    $tagName = $_POST["tagName"];
+    
+    //postDetails ausführen mit "access_token" und allen Details als Argumente
+    postDetails($access_token, $serialId, $statusId, $lagerortId, $tagId, $tagName);
+}elseif(isset($_POST["task"]) && $_POST["task"] == "updateStock"){
+    
+    //Status auslesen, damit er der Funktion übergeben werden kann
+    $status = $_POST["status"];
+    
+    //updateStock ausführen mit den Argumenten "access_token" und "status"
+    updateStock($access_token, $status);
 }
 
 
@@ -61,7 +79,7 @@ function getDetails($access_token, $serialNr){
         $antwort .=     '<div class="card">';
         $antwort .=         '<div class="card-header card-header-text card-header-primary">';
         $antwort .=             '<div class="card-text">';
-        $antwort .=                 '<h4 class="card-title">' . $serialNr . '</h4>';
+        $antwort .=                 '<h4 class="card-title" data-serial="' . $responseArray[0]->id . '" id="serialId">' . $serialNr . '</h4>';
         $antwort .=             '</div>';
         $antwort .=         '</div>';
         $antwort .=         '<div class="card-body"><br>';
@@ -139,7 +157,7 @@ function getDetails($access_token, $serialNr){
         $antwort .=                     '<p>Lagerort: </p>';
         $antwort .=                 '</div>';
         $antwort .=                 '<div class="col-md-4">';
-        $antwort .=                     '<select id="inputStatus" class="form-control">';
+        $antwort .=                     '<select id="inputLagerort" class="form-control">';
         
         //Lagerorte zum Status auslesen
         
@@ -188,7 +206,7 @@ function getDetails($access_token, $serialNr){
         $antwort .=                 '</div>';
         $antwort .=             '</div><br>';
         
-        //Zweite Zeile
+        //Fünfte Zeile
         $antwort .=             '<div class="row">';
         $antwort .=                 '<div class="col-md-4">';
         $antwort .=                     '<p>RFID-Tag: </p>';
@@ -197,8 +215,9 @@ function getDetails($access_token, $serialNr){
         
         //Prüfen, ob bereits ein RFID-Tag vorhanden ist
         //Falls ja, Identity als Value anzeigen und ID als data-Attribut hinzufügen
+        //Quelle: https://www.w3schools.com/tags/att_data-.asp
         if(isset($responseArray[0]->tags[0]->id)){
-            $antwort .=                 '<input type="text" class="form-control" id="inputTag" value="' . $responseArray[0]->tags[0]->identity . '" data-tag"' . $responseArray[0]->tags[0]->id .'">';
+            $antwort .=                 '<input type="text" class="form-control" id="inputTag" value="' . $responseArray[0]->tags[0]->identity . '" data-tag="' . $responseArray[0]->tags[0]->id .'">';
         }else{
             $antwort .=                 '<input type="text" class="form-control" id="inputTag">';
         }
@@ -230,6 +249,139 @@ function getDetails($access_token, $serialNr){
     
 }
 
+function postDetails($access_token, $serialId, $statusId, $lagerortId, $tagId, $tagName){
+    
+    //Überprüfen, ob Tag schon existiert
+    
+    //Code-Snippet aus dem Postman
+    $curl = curl_init();
 
+    curl_setopt_array($curl, array(
+      CURLOPT_URL => "https://iwc.ios-business-apps.com/api/iwc/tag/$tagName",
+      CURLOPT_RETURNTRANSFER => true,
+      CURLOPT_ENCODING => "",
+      CURLOPT_MAXREDIRS => 10,
+      CURLOPT_TIMEOUT => 0,
+      CURLOPT_FOLLOWLOCATION => true,
+      CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+      CURLOPT_CUSTOMREQUEST => "GET",
+      CURLOPT_HTTPHEADER => array(
+        "Authorization: Bearer $access_token"
+      ),
+    ));
+    
+    $tagInfos = curl_exec($curl);
+
+    curl_close($curl);
+    //Ende vom Code-Snippet
+    
+    //JSON-Objekt in ein PHP-Array umwandeln
+    $tagInfoArray = json_decode($tagInfos);
+    
+    //Prüft, ob die Abfrage einen Tag gefunden hat mit dem Namen
+    //Wenn ja, wird die ID des gefundenen Tags genommen, damit der Tag wechselt
+    //Wenn nicht, wird der Tag-Name mitgegeben, sodass ein neuer Tag erstellt wird
+    if(isset($tagInfoArray->id)){
+        //Tag existiert, ID muss benutzt werden
+        //ID wechselt den Tag des Geräts
+        $tagId = $tagInfoArray->id;
+        
+        //Code-Snippet aus dem Postman
+        $curl = curl_init();
+
+        curl_setopt_array($curl, array(
+          CURLOPT_URL => "https://iwc.ios-business-apps.com/api/iwc/item",
+          CURLOPT_RETURNTRANSFER => true,
+          CURLOPT_ENCODING => "",
+          CURLOPT_MAXREDIRS => 10,
+          CURLOPT_TIMEOUT => 0,
+          CURLOPT_FOLLOWLOCATION => true,
+          CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+          CURLOPT_CUSTOMREQUEST => "POST",
+          CURLOPT_POSTFIELDS =>"{\r\n        \"id\": \"$serialId\",\r\n        \"warehouse\": {\r\n            \"id\": \"$statusId\"\r\n        },\r\n        \"closet\": {\r\n            \"id\": \"$lagerortId\"\r\n        },\r\n        \"tags\": [{\r\n        \t\"id\": \"$tagId\"\r\n        }]\r\n    }",
+          CURLOPT_HTTPHEADER => array(
+            "Content-Type: application/json",
+            "Authorization: Bearer $access_token"
+          ),
+        ));
+
+        $response = curl_exec($curl);
+
+        curl_close($curl);
+        //Ende Code-Snippet 
+    }else{
+        //Tag existiert nicht, muss angelegt werden
+        //Name erstellt einen neuen Tag 
+        
+        //Code-Snippet aus dem Postman
+        $curl = curl_init();
+
+        curl_setopt_array($curl, array(
+          CURLOPT_URL => "https://iwc.ios-business-apps.com/api/iwc/item",
+          CURLOPT_RETURNTRANSFER => true,
+          CURLOPT_ENCODING => "",
+          CURLOPT_MAXREDIRS => 10,
+          CURLOPT_TIMEOUT => 0,
+          CURLOPT_FOLLOWLOCATION => true,
+          CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+          CURLOPT_CUSTOMREQUEST => "POST",
+          CURLOPT_POSTFIELDS =>"{\r\n        \"id\": \"$serialId\",\r\n        \"warehouse\": {\r\n            \"id\": \"$statusId\"\r\n        },\r\n        \"closet\": {\r\n            \"id\": \"$lagerortId\"\r\n        },\r\n        \"tags\": [{\r\n        \t\"identity\": \"$tagName\"\r\n        }]\r\n    }",
+          CURLOPT_HTTPHEADER => array(
+            "Content-Type: application/json",
+            "Authorization: Bearer $access_token"
+          ),
+        ));
+
+        $response = curl_exec($curl);
+
+        curl_close($curl);
+        //Ende Code-Snippet
+    }
+    
+    echo "Änderungen abgespeichert";
+    
+        
+}
+
+function updateStock($access_token, $status){
+    
+    //Alle Lagerorte zum Status auslesen
+    
+    //Code-Snippet aus dem Postman
+    $curl = curl_init();
+
+    curl_setopt_array($curl, array(
+      CURLOPT_URL => "https://iwc.ios-business-apps.com/api/iwc/area/$status",
+      CURLOPT_RETURNTRANSFER => true,
+      CURLOPT_ENCODING => "",
+      CURLOPT_MAXREDIRS => 10,
+      CURLOPT_TIMEOUT => 0,
+      CURLOPT_FOLLOWLOCATION => true,
+      CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+      CURLOPT_CUSTOMREQUEST => "GET",
+      CURLOPT_HTTPHEADER => array(
+        "Authorization: Bearer $access_token"
+      ),
+    ));
+
+    $stock = curl_exec($curl);
+
+    curl_close($curl);
+    //Ende Code-Snippet
+    
+    //JSON-Objekt in ein PHP-Array umwandeln
+    $stockArray = json_decode($stock);
+
+    //Reihenfolge der Objekte umkehren, damit sie bei foreach in der richtigen Reihenfolge kommen
+    //Quelle: https://www.w3schools.com/php/func_array_reverse.asp
+    $stockArray = array_reverse($stockArray);
+    
+    //Alle Lagerorte durchgehen, Lagerort des Geräts auswählen und IDs als Value hinterlegen
+    foreach($stockArray as $lagerorte){
+        echo "<option value='" . $lagerorte->id . "'>" . $lagerorte->description . "</option>";  
+    }
+    
+    
+}
 
 ?>
