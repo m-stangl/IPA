@@ -67,8 +67,8 @@ if(isset($_POST["username"]) && isset($_POST["password"])){
     <!-- Eigenes CSS einbinden -->
     <link rel="stylesheet" href="assets/css/stylesheet.css" />
   </head>
-  <body class="backgroundWatch">
-      <div class="transparentLayer">
+  <body class="backgroundWatch fullBg">
+      <div class="transparentLayer dark">
           <!--   Halb-transparente Schicht über Hintergrund
                  Quelle: https://stackoverflow.com/questions/9182978/semi-transparent-color-layer-over-background-image   -->
       </div>
@@ -99,7 +99,7 @@ if(isset($_POST["username"]) && isset($_POST["password"])){
                           </div>
                           <!--  Login-Button, muss in der Mitte sein
                                 Quelle: https://stackoverflow.com/questions/4221263/center-form-submit-buttons-html-css-->
-                          <div class="buttonHolder" align="center">
+                          <div align="center">
                             <input type="submit" class="btn btn-primary" value="Login">
                           </div>
                         </form>

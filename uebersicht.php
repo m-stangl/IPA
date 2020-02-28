@@ -29,8 +29,8 @@ if(!isset($_SESSION["access_token"])){
             Quelle: https://www.w3schools.com/jquery/jquery_get_started.asp -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
   </head>
-  <body class="backgroundWatch">
-      <div class="transparentLayer">
+  <body class="backgroundWatch fullBg">
+      <div class="transparentLayer dark">
       <!--   Halb-transparente Schicht über Hintergrund
              Quelle: https://stackoverflow.com/questions/9182978/semi-transparent-color-layer-over-background-image   -->
       </div>
