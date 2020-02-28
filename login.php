@@ -67,8 +67,8 @@ if(isset($_POST["username"]) && isset($_POST["password"])){
     <!-- Eigenes CSS einbinden -->
     <link rel="stylesheet" href="assets/css/stylesheet.css" />
   </head>
-  <body class="backgroundWatch">
-      <div class="transparentLayer">
+  <body class="backgroundWatch fullBg">
+      <div class="transparentLayer dark">
           <!--   Halb-transparente Schicht über Hintergrund
                  Quelle: https://stackoverflow.com/questions/9182978/semi-transparent-color-layer-over-background-image   -->
       </div>

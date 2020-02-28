@@ -17,23 +17,31 @@ html, body {
 
 /*Hintergrundbild*/
 .backgroundWatch {
-    position: absolute;
     background-image: url(../img/background.webp);
     background-repeat: no-repeat;
     background-size: cover;
     background-position: center;
+    
+}
+
+.fullBg {
+    position: absolute;
     height: 100%;
     width: 100%;
 }
 
 .transparentLayer {
-    background-color: black;
+    background-color: #3E3D40;
     opacity: 0.8;
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
+}
+
+.dark {
+    background-color: black;
 }
 
 .loginInputs {
@@ -55,3 +63,20 @@ Quelle: https://css-tricks.com/centering-css-complete-guide/ */
     left: 50%;
     transform: translate(-50%, -50%);
 }
+
+.whiteFont, #weiss {
+    color: white;
+    text-transform: none;
+}
+
+/* IWC-Logo*/
+.logo-wrapper img{
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#logo {
+    height: 50px;
+}
+/* IWC-Logo Ende*/
