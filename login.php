@@ -99,7 +99,7 @@ if(isset($_POST["username"]) && isset($_POST["password"])){
                           </div>
                           <!--  Login-Button, muss in der Mitte sein
                                 Quelle: https://stackoverflow.com/questions/4221263/center-form-submit-buttons-html-css-->
-                          <div class="buttonHolder" align="center">
+                          <div align="center">
                             <input type="submit" class="btn btn-primary" value="Login">
                           </div>
                         </form>

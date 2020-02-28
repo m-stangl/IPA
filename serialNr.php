@@ -1,3 +1,15 @@
+<?php
+//Session starten, damit man darauf zugreifen kann
+session_start();
+
+//überprüfen, ob ein Login erfolgt ist
+//Quelle: Schulprojekt "Dupload" => cloud.derbeton.ch
+if(!isset($_SESSION["access_token"])){
+    //Umleiten auf Login-Seite, da es ein unbefugter Zugriff ist
+    header("Location: login.php");
+}
+?>
+
 <!doctype html>
 <html lang="en">
 
@@ -28,11 +40,6 @@
               <!--   Halb-transparente Schicht über Hintergrund
                      Quelle: https://stackoverflow.com/questions/9182978/semi-transparent-color-layer-over-background-image   -->
           </div>
-          <!--
-          Tip 1: You can change the color of the sidebar using: data-color="purple | azure | green | orange | danger"
-
-          Tip 2: you can also add an image using data-image tag
-      -->
           <div class="logo">
               <div class="logo-wrapper">
                 <img src="assets/img/iwc_logo.png" alt="logo" id="logo">
@@ -79,27 +86,88 @@
           <div class="content">
             <div class="container-fluid">
               <!-- your content here -->
-                
-                <!--  Logout-Button   -->
-          <button type="button" class="btn btn-primary logout">Logout</button>
-
-
+                <div class="row">
+                  <div class="col-md-2"></div>
+                  <div class="col-md-8">
+                      <div class="card">
+                          <div class="card-header card-header-text card-header-primary">
+                            <div class="card-text">
+                              <h4 class="card-title">Nach einer Seriennummer suchen</h4>
+                            </div>
+                          </div>
+                          <div class="card-body">
+                              <br>
+                                  <div class="row">
+                                      <div class="col-md-1"></div>
+                                      <div class="col-md-5">
+                                    <label for="inputSerial">Seriennummer</label>
+                                    <input type="text" class="form-control" id="inputSerial" placeholder="" value="ZURFAZE">
+                                          </div>
+                                      <div class="col-md-3"></div>
+                                      <div class="col-md-3">
+                                        <button type="button" class="btn btn-primary" id="suchen">Suchen</button>
+                                      </div>
+                                  </div>
+                              <br>
+                          </div>
+                      </div>
+                  </div>
+                  <div class="col-md-2"></div>
+                </div>
+                <div class="row" id="details"></div>
+              
             </div>
           </div>
 
         </div>
       </div>
+      <!--  Logout-Button   -->
+      <button type="button" class="btn btn-primary logout">Logout</button>
       <!--   jQuery-Code   -->
       <script>
             $(document).ready(function(){
                 //Wird ausgeführt, sobald das Dokument vollständig geladen wurde
-
+                
                 //Logout-Button aktivieren
                 //Quelle: Schulprojekt "Tesla"
                 $(".logout").on("click", function(){
                     //Beim Klick auf den Button auf logout.php weiterleiten
                     window.location.href = "logout.php";
                 })
+                
+                //Suchen-Button aktivieren
+                $("#suchen").on("click", function(){
+                    //Funktion zur AJAX-Abfrage aufrufen
+                    getDetails();
+                })
+                
+                function getDetails(){
+                    console.log("jetzt ajax");
+                    
+                    //Wert aus Inputfeld lesen
+                    //Quelle: https://api.jquery.com/val/
+                    var serialNr = $("#inputSerial").val();
+                    
+                    //AJAX-Request an apiHandler.php
+                    //Quelle: Schulprojekt "Waluegemer" => https://waluegemer.derbeton.ch/
+                    $.ajax({
+                        type: 'post',
+                        url: 'apiHandler.php',
+                        data: {
+                            //Seriennummer und Aufgabe für apiHandler mitschicken
+                            serialNr: serialNr,
+                            task: 'getDetails',
+					},
+					success: function (antwort) {
+					 
+                     //Antwort anzeigen
+					 $('#details').html(antwort);
+					        
+					}
+				});
+                }
+
+                
 
             })
       </script>
