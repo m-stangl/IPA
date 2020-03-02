@@ -1,6 +1,6 @@
 <?php
+//Session starten, damit man darauf zugreifen kann
 session_start();
-//Session beginnen
 
 //überprüfen, ob Benutzername und Kennwort eingegeben worden sind
 if(isset($_POST["username"]) && isset($_POST["password"])){
@@ -33,6 +33,7 @@ if(isset($_POST["username"]) && isset($_POST["password"])){
     //Ende vom Code-Snippet
     
     //JSON-Objekt in ein PHP-Array umwandeln
+    //Quelle: https://www.w3schools.com/js/js_json_php.asp
     $responseArray = json_decode($response, true);
     
     //Prüfen, ob der Loginversuch erfolgreich war
@@ -49,7 +50,6 @@ if(isset($_POST["username"]) && isset($_POST["password"])){
         //Umleiten auf die Übersicht
         header("Location: uebersicht.php");
     }
-    
 }
 ?>
 <!-- HTML-Grundgerüst -->
@@ -58,7 +58,7 @@ if(isset($_POST["username"]) && isset($_POST["password"])){
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Titel</title>
+    <title>IWC Inventory Admin Panel</title>
     <!-- Einbinden von Schriftarten und Icons -->
     <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Roboto+Slab:400,700|Material+Icons" />
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css">
@@ -72,8 +72,6 @@ if(isset($_POST["username"]) && isset($_POST["password"])){
           <!--   Halb-transparente Schicht über Hintergrund
                  Quelle: https://stackoverflow.com/questions/9182978/semi-transparent-color-layer-over-background-image   -->
       </div>
-      
-      
       <div class="container centerMid">
         <div class="row align-items-center">
           <div class="col"></div>
@@ -82,7 +80,7 @@ if(isset($_POST["username"]) && isset($_POST["password"])){
               <div class="card">
                   <div class="card-header card-header-text card-header-primary">
                     <div class="card-text">
-                      <h4 class="card-title" id="cardTitleLogin">Here is the Text - Login</h4>
+                      <h4 class="card-title" id="cardTitleLogin">IWC Inventory Admin Panel - Login</h4>
                     </div>
                   </div>
                   <div class="card-body">

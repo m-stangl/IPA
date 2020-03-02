@@ -9,30 +9,26 @@ if(!isset($_SESSION["access_token"])){
     header("Location: login.php");
 }
 ?>
-
+<!-- Material Template -->
 <!doctype html>
 <html lang="en">
-
-<head>
-  <title>Hello, world!</title>
-  <!-- Required meta tags -->
-  <meta charset="utf-8">
-  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
-  
-  
-  <!-- Einbinden von Schriftarten und Icons -->
-  <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Roboto+Slab:400,700|Material+Icons" />
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css">
-  <!-- Material Kit CSS einbinden-->
-  <link href="assets/css/material-dashboard.css?v=2.1.2" rel="stylesheet" />
-  <!-- Eigenes CSS einbinden -->
-  <link rel="stylesheet" href="assets/css/stylesheet.css" />
-<!--    jQuery-Bibliothek einbinden
-        Quelle: https://www.w3schools.com/jquery/jquery_get_started.asp -->
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-</head>
-
+    <head>
+      <title>IWC Inventory Admin Panel</title>
+      <!-- Required meta tags -->
+      <meta charset="utf-8">
+      <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+      <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+      <!-- Einbinden von Schriftarten und Icons -->
+      <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Roboto+Slab:400,700|Material+Icons" />
+      <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css">
+      <!-- Material Kit CSS einbinden-->
+      <link href="assets/css/material-dashboard.css?v=2.1.2" rel="stylesheet" />
+      <!-- Eigenes CSS einbinden -->
+      <link rel="stylesheet" href="assets/css/stylesheet.css" />
+      <!--    jQuery-Bibliothek einbinden
+              Quelle: https://www.w3schools.com/jquery/jquery_get_started.asp -->
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    </head>
     <body>
       <div class="wrapper ">
         <div class="sidebar backgroundWatch" data-color="purple" data-background-color="white">
@@ -86,14 +82,10 @@ if(!isset($_SESSION["access_token"])){
           <!-- End Navbar -->
           <div class="content">
             <div class="container-fluid">
-              <!-- your content here -->
-                <div class="row" id="report">
-                  
-                </div>
-              
+              <!-- my content here -->
+                <div class="row" id="report"></div>
             </div>
           </div>
-
         </div>
       </div>
       <!--  Logout-Button   -->
@@ -109,13 +101,8 @@ if(!isset($_SESSION["access_token"])){
                     //Beim Klick auf den Button auf logout.php weiterleiten
                     window.location.href = "logout.php";
                 })
-                
-                //Suchen-Button aktivieren
-                $("#aktualisieren").on("click", function(){
-                    //Funktion zur AJAX-Abfrage aufrufen
-                    getReport();
-                })
-                
+                  
+                //Funktion ausführen, wenn das Dokument geladen wurde
                 getReport();
                 
                 //Funktion holt Report
@@ -136,7 +123,12 @@ if(!isset($_SESSION["access_token"])){
                      //Antwort anzeigen
 					 $('#report').html(response);
                      
-					        
+                     //Aktualisieren-Button aktivieren
+                     $('#aktualisieren').on('click', function(){
+                         
+                         //Beim Klick auf den Button soll der Report neu geladen werden
+                         getReport();
+                     })
 					}
 				});
                 }

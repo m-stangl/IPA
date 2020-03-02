@@ -20,6 +20,7 @@ if(isset($_POST["task"]) && $_POST["task"] == "getDetails"){
     
     //getDetails ausführen mit den Argumenten "access_token" und "serialNr"
     getDetails($access_token, $serialNr);
+    
 }elseif(isset($_POST["task"]) && $_POST["task"] == "postDetails"){
     
     //Details auslesen, da sie der Funktion übergeben werden müssen
@@ -31,6 +32,7 @@ if(isset($_POST["task"]) && $_POST["task"] == "getDetails"){
     
     //postDetails ausführen mit "access_token" und allen Details als Argumente
     postDetails($access_token, $serialId, $statusId, $lagerortId, $tagId, $tagName);
+    
 }elseif(isset($_POST["task"]) && $_POST["task"] == "updateStock"){
     
     //Status auslesen, damit er der Funktion übergeben werden kann
@@ -38,6 +40,7 @@ if(isset($_POST["task"]) && $_POST["task"] == "getDetails"){
     
     //updateStock ausführen mit den Argumenten "access_token" und "status"
     updateStock($access_token, $status);
+    
 }elseif(isset($_POST["task"]) && $_POST["task"] == "getAsset"){
     
     //Anlagenummer auslesen, damit sie der Funktion übergeben werden kann
@@ -45,15 +48,17 @@ if(isset($_POST["task"]) && $_POST["task"] == "getDetails"){
     
     //getAsset ausführen mit den Argumenten "access_token" und "assetNr"
     getAsset($access_token, $assetNr);
+    
 }elseif(isset($_POST["task"]) && $_POST["task"] == "getReport"){
     
     //getAsset ausführen mit dem Argument "access_token"
     getReport($access_token);
+    
 }
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-////    FUNKTION GETDETAILS                                                                                                                                                                                 ////
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////
+//    FUNKTION GETDETAILS                                                                  //
+/////////////////////////////////////////////////////////////////////////////////////////////
 
 function getDetails($access_token, $serialNr){
     
@@ -80,6 +85,7 @@ function getDetails($access_token, $serialNr){
     //Ende vom Code-Snippet
     
     //JSON-Objekt in ein PHP-Array umwandeln
+    //Quelle: https://www.w3schools.com/js/js_json_php.asp
     $responseArray = json_decode($response);
         
     //Prüfen, ob Gerät gefunden wurde
@@ -150,6 +156,7 @@ function getDetails($access_token, $serialNr){
         //Ende vom Code-Snippet
     
         //JSON-Objekt in ein PHP-Array umwandeln
+        //Quelle: https://www.w3schools.com/js/js_json_php.asp
         $statiArray = json_decode($stati);
                 
         //Alle Stati durchgehen, Status des Geräts auswählen und IDs als Value hinterlegen
@@ -159,7 +166,6 @@ function getDetails($access_token, $serialNr){
             }else{
                 $antwort .= "<option value='" . $status->id . "'>" . $status->description . "</option>";
             }
-            
         }
         
         $antwort .=                     '</select>';  
@@ -201,9 +207,10 @@ function getDetails($access_token, $serialNr){
         //Ende vom Code-Snippet
         
         //JSON-Objekt in ein PHP-Array umwandeln
+        //Quelle: https://www.w3schools.com/js/js_json_php.asp
         $stockArray = json_decode($stock);
         
-        //Reihenfolge der Objekte umkehren, damit sie bei foreach in der richtigen Reihenfolge kommen
+        //Reihenfolge der Objekte umkehren, damit sie nach foreach in der richtigen Reihenfolge kommen
         //Quelle: https://www.w3schools.com/php/func_array_reverse.asp
         $stockArray = array_reverse($stockArray);
         
@@ -239,10 +246,9 @@ function getDetails($access_token, $serialNr){
         $antwort .=                 '</div>';
         $antwort .=             '</div><br>';
         //Zeile für den Button
+        //Button nur einfügen, wenn die Rolle des Benutzers admin oder manager ist
         if($_SESSION['role'] == "admin" or $_SESSION['role'] == "manager"){
             $antwort .=             '<div class="row">';
-            /*$antwort .=                 '<div class="col-md-6">';
-            $antwort .=                 '</div>';*/
             $antwort .=                 '<div class="col" style="text-align:center">';
             $antwort .=                     '<button type="button" class="btn btn-primary" id="speichern">Speichern</button>';
             $antwort .=                 '</div>';
@@ -263,9 +269,9 @@ function getDetails($access_token, $serialNr){
     
 }
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-////    FUNKTION POSTDETAILS                                                                                                                                                                                ////
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////
+//    FUNKTION POSTDETAILS                                                                 //
+/////////////////////////////////////////////////////////////////////////////////////////////
 
 function postDetails($access_token, $serialId, $statusId, $lagerortId, $tagId, $tagName){
     
@@ -294,6 +300,7 @@ function postDetails($access_token, $serialId, $statusId, $lagerortId, $tagId, $
     //Ende vom Code-Snippet
     
     //JSON-Objekt in ein PHP-Array umwandeln
+    //Quelle: https://www.w3schools.com/js/js_json_php.asp
     $tagInfoArray = json_decode($tagInfos);
     
     //Prüft, ob die Abfrage einen Tag gefunden hat mit dem Namen
@@ -326,7 +333,8 @@ function postDetails($access_token, $serialId, $statusId, $lagerortId, $tagId, $
         $response = curl_exec($curl);
 
         curl_close($curl);
-        //Ende Code-Snippet 
+        //Ende Code-Snippet
+        
     }else{
         //Tag existiert nicht, muss angelegt werden
         //Name erstellt einen neuen Tag 
@@ -358,12 +366,11 @@ function postDetails($access_token, $serialId, $statusId, $lagerortId, $tagId, $
     
     echo "Änderungen abgespeichert";
     
-        
 }
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-////    FUNKTION UPDATESTOCK                                                                                                                                                                                   ////
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////
+//    FUNKTION UPDATESTOCK                                                                 //
+/////////////////////////////////////////////////////////////////////////////////////////////
 
 function updateStock($access_token, $status){
     
@@ -392,9 +399,10 @@ function updateStock($access_token, $status){
     //Ende Code-Snippet
     
     //JSON-Objekt in ein PHP-Array umwandeln
+    //Quelle: https://www.w3schools.com/js/js_json_php.asp
     $stockArray = json_decode($stock);
 
-    //Reihenfolge der Objekte umkehren, damit sie bei foreach in der richtigen Reihenfolge kommen
+    //Reihenfolge der Objekte umkehren, damit sie nach foreach in der richtigen Reihenfolge kommen
     //Quelle: https://www.w3schools.com/php/func_array_reverse.asp
     $stockArray = array_reverse($stockArray);
     
@@ -406,9 +414,9 @@ function updateStock($access_token, $status){
     
 }
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-////    FUNKTION GETASSET                                                                                                                                                                                   ////
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////
+//    FUNKTION GETASSET                                                                    //
+/////////////////////////////////////////////////////////////////////////////////////////////
 
 function getAsset($access_token, $assetNr){
     //Alle Infos zur Anlagenummer auslesen
@@ -436,6 +444,7 @@ function getAsset($access_token, $assetNr){
     //Ende vom Code-Snippet
     
     //JSON-Objekt in ein PHP-Array umwandeln
+    //Quelle: https://www.w3schools.com/js/js_json_php.asp
     $assetArray = json_decode($asset);
     
     //Prüfen, ob Anlagenummer gefunden wurde
@@ -550,9 +559,9 @@ function getAsset($access_token, $assetNr){
     }
 }
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-////    FUNKTION GETREPORT                                                                                                                                                                                 ////
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////
+////    FUNKTION GETREPORT                                                                 //
+/////////////////////////////////////////////////////////////////////////////////////////////
 
 function getReport($access_token){
     
@@ -581,6 +590,7 @@ function getReport($access_token){
     //Ende vom Code-Snippet
     
     //JSON-Objekt in ein PHP-Array umwandeln
+    //Quelle: https://www.w3schools.com/js/js_json_php.asp
     $reportArray = json_decode($report);
    
     //Alle Anlagenummern und Geräteanzahl ausgeben
@@ -615,7 +625,14 @@ function getReport($access_token){
         $antwort .= "</tr>";
     }
     $antwort .=     '</tbody>';
-    $antwort .= '</table><br>';
+    $antwort .= '</table>';
+    
+    //Aktualisieren-Button einfügen
+    $antwort .= '<div class="row">';
+    $antwort .=     '<div class="col" style="text-align:center">';
+    $antwort .=         '<button type="button" class="btn btn-primary" id="aktualisieren">Aktualisieren</button>';
+    $antwort .=     '</div>';
+    $antwort .= '</div>';
     
     //Card-body Ende
     $antwort .=         '</div>';

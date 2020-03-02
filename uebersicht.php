@@ -9,13 +9,13 @@ if(!isset($_SESSION["access_token"])){
     header("Location: login.php");
 }
 ?>
+<!-- HTML-Grundgerüst -->
 <!DOCTYPE html>
 <html lang="de">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Titel</title>
-      
+    <title>IWC Inventory Admin Panel</title>
     <!-- Einbinden des originalen Bootstrap CSS für Stretched-Links auf der Übersicht  Quelle: https://getbootstrap.com/-->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" crossorigin="anonymous">
     <!-- Einbinden von Schriftarten und Icons -->
@@ -34,7 +34,6 @@ if(!isset($_SESSION["access_token"])){
       <!--   Halb-transparente Schicht über Hintergrund
              Quelle: https://stackoverflow.com/questions/9182978/semi-transparent-color-layer-over-background-image   -->
       </div>
-      
       <!--   Beginn der Übersicht   -->
       <div class="container centerMid" style="">
         <div class="row align-items-center">
@@ -90,10 +89,8 @@ if(!isset($_SESSION["access_token"])){
         </div>
       </div>
       <!--   Ende der Übersicht   -->
-      
       <!--  Logout-Button   -->
       <button type="button" class="btn btn-primary logout">Logout</button>
-      
       <!--   jQuery-Code   -->
       <script>
             $(document).ready(function(){
@@ -105,7 +102,6 @@ if(!isset($_SESSION["access_token"])){
                     //Beim Klick auf den Button auf logout.php weiterleiten
                     window.location.href = "logout.php";
                 })
-                
             })
       </script>
   </body>
