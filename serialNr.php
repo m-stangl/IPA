@@ -100,9 +100,10 @@ if(!isset($_SESSION["access_token"])){
                                       <div class="col-md-1"></div>
                                       <div class="col-md-5">
                                     <label for="inputSerial">Seriennummer</label>
-                                    <input type="text" class="form-control" id="inputSerial" placeholder="" <?php //Wert ins Suchfeld geben, falls man über Link auf diese Seite kommt
-                                           if(isset($_GET['serialNr'])){
-                                               echo "value='" . $_GET['serialNr'] . "'";
+                                    <input type="text" class="form-control" id="inputSerial" placeholder="" <?php 
+                                           //Wert ins Suchfeld geben, falls man über Link auf diese Seite kommt
+                                           if(isset($_SESSION['serialNr'])){
+                                               echo "value='" . $_SESSION['serialNr'] . "'";
                                            }
                                            ?>>
                                           </div>
@@ -148,7 +149,7 @@ if(!isset($_SESSION["access_token"])){
                 //Wenn man auf einen Link auf diese Seite kommt, steht Seriennummer in der URL
                 //Details müssen beim Aufrufen sofort abgefragt und angezeigt werden
                 
-                if(isset($_GET['serialNr'])){                    
+                if(isset($_SESSION['serialNr'])){                    
                     //Funktion ausführen mit true als Argument
                     echo "getDetails(true)";
                 }
@@ -161,10 +162,13 @@ if(!isset($_SESSION["access_token"])){
                     if (getOrNot) {
                         //Wert aus der URL
                         <?php                        
-                        if(isset($_GET['serialNr'])){
+                        if(isset($_SESSION['serialNr'])){
                             //Variable in JS-Code übergeben
-                            echo "var serialNr = '" . $_GET['serialNr'] . "';";
+                            echo "var serialNr = '" . $_SESSION['serialNr'] . "';";
                         }
+                        
+                        //Session-Variable löschen, da sie sonst manuelle Suchen behindert
+                        unset($_SESSION['serialNr']);
                         ?>
                     } else {
                         //Wert aus Inputfeld lesen

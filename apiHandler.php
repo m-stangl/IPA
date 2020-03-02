@@ -113,9 +113,9 @@ function getDetails($access_token, $serialNr){
         $antwort .=                 '<div class="col-md-4">';
         $antwort .=                     '<p>Anlagenummer: </p>';
         $antwort .=                 '</div>';
-        $antwort .=                 '<div class="col-md-4">';
+        $antwort .=                 '<div class="col-md-4"><a href="links.php?assetNr=' . $responseArray[0]->assetNumber . '">';
         $antwort .=                 $responseArray[0]->assetNumber;
-        $antwort .=                 '</div>';
+        $antwort .=                 '</a></div>';
         $antwort .=             '</div>';
         //Dritte Zeile
         $antwort .=             '<div class="row">';
@@ -478,7 +478,7 @@ function getAsset($access_token, $assetNr){
             //Jedes Gerät vom Status "IT" auslesen
             //Quelle: https://www.w3schools.com/php/php_looping_foreach.asp
             foreach($assetArray->articlesIt as $value){
-                $antwort .=     '<td><a href="serialNr.php?serialNr=' . $value->serialNumber . '">' . $value->serialNumber . '</a></td>';
+                $antwort .=     '<td><a href="links.php?serialNr=' . $value->serialNumber . '">' . $value->serialNumber . '</a></td>';
                 $antwort .=     '<td class="text-right">' . $value->master->description . '</td>';
             }
             $antwort .=     '</tbody>';
@@ -502,7 +502,7 @@ function getAsset($access_token, $assetNr){
             //Jedes Gerät vom Status "Extern" auslesen
             //Quelle: https://www.w3schools.com/php/php_looping_foreach.asp
             foreach($assetArray->articlesExtern as $value){
-                $antwort .=     '<td><a href="serialNr.php?serialNr=' . $value->serialNumber . '">' . $value->serialNumber . '</a></td>';
+                $antwort .=     '<td><a href="links.php?serialNr=' . $value->serialNumber . '">' . $value->serialNumber . '</a></td>';
                 $antwort .=     '<td class="text-right">' . $value->master->description . '</td>';
             }
             $antwort .=     '</tbody>';
@@ -526,7 +526,7 @@ function getAsset($access_token, $assetNr){
             //Jedes Gerät vom Status "IWC" auslesen
             //Quelle: https://www.w3schools.com/php/php_looping_foreach.asp
             foreach($assetArray->articlesIwc as $value){
-                $antwort .=     '<td><a href="serialNr.php?serialNr=' . $value->serialNumber . '">' . $value->serialNumber . '</a></td>';
+                $antwort .=     '<td><a href="links.php?serialNr=' . $value->serialNumber . '">' . $value->serialNumber . '</a></td>';
                 $antwort .=     '<td class="text-right">' . $value->master->description . '</td>';
             }
             $antwort .=     '</tbody>';
@@ -610,7 +610,7 @@ function getReport($access_token){
     //Anlagenummern auflisten
     foreach($reportArray as $val){
         $antwort .= "<tr>";
-        $antwort .=     "<td><a href='assetNr.php?assetNr=" . $val->assetNumber . "'>". $val->assetNumber . "</a></td>";
+        $antwort .=     "<td><a href='links.php?assetNr=" . $val->assetNumber . "'>". $val->assetNumber . "</a></td>";
         $antwort .=     "<td class='text-right'>" . $val->countItems . "</td>";
         $antwort .= "</tr>";
     }

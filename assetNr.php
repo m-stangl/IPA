@@ -103,8 +103,8 @@ if(!isset($_SESSION["access_token"])){
                                       <div class="col-md-5">
                                     <label for="inputAsset">Anlagenummer</label>
                                     <input type="text" class="form-control" id="inputAsset" placeholder="" <?php //Wert ins Suchfeld geben, falls man über Link auf diese Seite kommt
-                                           if(isset($_GET['assetNr'])){
-                                               echo "value='" . $_GET['assetNr'] . "'";
+                                           if(isset($_SESSION['assetNr'])){
+                                               echo "value='" . $_SESSION['assetNr'] . "'";
                                            }
                                            ?>>
                                           </div>
@@ -150,7 +150,7 @@ if(!isset($_SESSION["access_token"])){
                 //Wenn man auf einen Link auf diese Seite kommt, steht Seriennummer in der URL
                 //Details müssen beim Aufrufen sofort abgefragt und angezeigt werden
                 
-                if(isset($_GET['assetNr'])){                    
+                if(isset($_SESSION['assetNr'])){                    
                     //Funktion ausführen mit true als Argument
                     echo "getAsset(true)";
                 }
@@ -163,10 +163,13 @@ if(!isset($_SESSION["access_token"])){
                     if (getOrNot) {
                         //Wert aus der URL
                         <?php                        
-                        if(isset($_GET['assetNr'])){
+                        if(isset($_SESSION['assetNr'])){
                             //Variable in JS-Code übergeben
-                            echo "var assetNr = '" . $_GET['assetNr'] . "';";
+                            echo "var assetNr = '" . $_SESSION['assetNr'] . "';";
                         }
+                        
+                        //Session-Variable löschen, da sie sonst manuelle Suchen behindert
+                        unset($_SESSION['assetNr']);
                         ?>
                     } else {
                         //Wert aus Inputfeld lesen
