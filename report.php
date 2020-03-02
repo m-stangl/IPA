@@ -58,13 +58,13 @@ if(!isset($_SESSION["access_token"])){
                 </a>
               </li>
               <!-- your sidebar here -->
-              <li class="nav-item active">
+              <li class="nav-item">
                 <a class="nav-link" href="assetNr.php">
                   <i class="material-icons whiteFont">dashboard</i>
                   <p class="whiteFont">Anlagenummern</p>
                 </a>
               </li>
-                <li class="nav-item">
+                <li class="nav-item active">
                 <a class="nav-link" href="report.php">
                   <i class="material-icons">dashboard</i>
                   <p class="whiteFont">Report</p>
@@ -78,7 +78,7 @@ if(!isset($_SESSION["access_token"])){
           <nav class="navbar navbar-expand-lg navbar-transparent navbar-absolute fixed-top ">
             <div class="container-fluid">
               <div class="navbar-wrapper">
-                <a class="navbar-brand" href="javascript:;">Anlagenummer</a>
+                <a class="navbar-brand" href="javascript:;">Report Anlagenummern</a>
               </div>
             </div>
           </nav>
@@ -86,39 +86,9 @@ if(!isset($_SESSION["access_token"])){
           <div class="content">
             <div class="container-fluid">
               <!-- your content here -->
-                <div class="row">
-                  <div class="col-md-2"></div>
-                  <div class="col-md-8">
-                      <div class="card">
-                          <div class="card-header card-header-text card-header-primary">
-                            <div class="card-text">
-                              <h4 class="card-title">Nach einer Anlagenummer suchen</h4>
-                            </div>
-                          </div>
-                          <div class="card-body">
-                              <br>
-                                  <div class="row">
-                                      <div class="col-md-1"></div>
-                                      <div class="col-md-5">
-                                    <label for="inputAsset">Anlagenummer</label>
-                                    <input type="text" class="form-control" id="inputAsset" placeholder="" <?php //Wert ins Suchfeld geben, falls man über Link auf diese Seite kommt
-                                           if(isset($_GET['assetNr'])){
-                                               echo "value='" . $_GET['assetNr'] . "'";
-                                           }
-                                           ?>>
-                                          </div>
-                                      <div class="col-md-3"></div>
-                                      <div class="col-md-3">
-                                        <button type="button" class="btn btn-primary" id="suchen">Suchen</button>
-                                      </div>
-                                  </div>
-                              <br>
-                          </div>
-                      </div>
-                  </div>
-                  <div class="col-md-2"></div>
+                <div class="row" id="report">
+                  
                 </div>
-                <div class="row" id="details"></div>
               
             </div>
           </div>
@@ -140,56 +110,30 @@ if(!isset($_SESSION["access_token"])){
                 })
                 
                 //Suchen-Button aktivieren
-                $("#suchen").on("click", function(){
+                $("#aktualisieren").on("click", function(){
                     //Funktion zur AJAX-Abfrage aufrufen
-                    getAsset();
+                    getReport();
                 })
                 
-                <?php 
-                //Wenn man auf einen Link auf diese Seite kommt, steht Seriennummer in der URL
-                //Details müssen beim Aufrufen sofort abgefragt und angezeigt werden
+                getReport();
                 
-                if(isset($_GET['assetNr'])){                    
-                    //Funktion ausführen mit true als Argument
-                    echo "getAsset(true)";
-                }
-                ?>
-                
-                //Funktion holt Details zur Anlagenummer
-                function getAsset(getOrNot){
-                    
-                    //Prüfen, ob der Wert aus der URL oder dem Suchfeld genommen wird
-                    if (getOrNot) {
-                        //Wert aus der URL
-                        <?php                        
-                        if(isset($_GET['assetNr'])){
-                            //Variable in JS-Code übergeben
-                            echo "var assetNr = '" . $_GET['assetNr'] . "';";
-                        }
-                        ?>
-                    } else {
-                        //Wert aus Inputfeld lesen
-                        //Quelle: https://api.jquery.com/val/
-                        var assetNr = $("#inputAsset").val();
-                    }
-                    
-                    
-                    
+                //Funktion holt Report
+                function getReport(){
+                                        
                     //AJAX-Request an apiHandler.php
                     //Quelle: Schulprojekt "Waluegemer" => https://waluegemer.derbeton.ch/
                     $.ajax({
                         type: 'post',
                         url: 'apiHandler.php',
                         data: {
-                            //Anlagenummer und Aufgabe für apiHandler mitschicken
-                            assetNr: assetNr,
-                            task: 'getAsset',
+                            //Aufgabe für apiHandler schicken
+                            task: 'getReport',
 					},
 					success: function (response) {
 					 //War die Übertragung erfolgreich, wird folgender Code ausgeführt
                         
                      //Antwort anzeigen
-					 $('#details').html(response);
+					 $('#report').html(response);
                      
 					        
 					}

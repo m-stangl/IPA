@@ -19,8 +19,6 @@ if(!isset($_SESSION["access_token"])){
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
-  
-  
   <!-- Einbinden von Schriftarten und Icons -->
   <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Roboto+Slab:400,700|Material+Icons" />
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css">
@@ -65,7 +63,7 @@ if(!isset($_SESSION["access_token"])){
                 </a>
               </li>
                 <li class="nav-item">
-                <a class="nav-link" href="#0">
+                <a class="nav-link" href="report.php">
                   <i class="material-icons">dashboard</i>
                   <p class="whiteFont">Report</p>
                 </a>
@@ -149,14 +147,11 @@ if(!isset($_SESSION["access_token"])){
                 //Wenn man auf einen Link auf diese Seite kommt, steht Seriennummer in der URL
                 //Details müssen beim Aufrufen sofort abgefragt und angezeigt werden
                 
-                if(isset($_GET['serialNr'])){
-                    
-                    //Wert auslesen
-                    $serialNr = $_GET['serialNr'];
+                if(isset($_GET['serialNr'])){                    
                     //Funktion ausführen mit true als Argument
                     echo "getDetails(true)";
                 }
-                    ?>
+                ?>
                 
                 //Funktion holt Details zur Seriennummer
                 function getDetails(getOrNot){
@@ -164,10 +159,12 @@ if(!isset($_SESSION["access_token"])){
                     //Prüfen, ob der Wert aus der URL oder dem Suchfeld genommen wird
                     if (getOrNot) {
                         //Wert aus der URL
-                        <?php
-                        echo "var serialNr = '" . $serialNr . "';";
+                        <?php                        
+                        if(isset($_GET['serialNr'])){
+                            //Variable in JS-Code übergeben
+                            echo "var serialNr = '" . $_GET['serialNr'] . "';";
+                        }
                         ?>
-                        
                     } else {
                         //Wert aus Inputfeld lesen
                         //Quelle: https://api.jquery.com/val/
@@ -222,9 +219,7 @@ if(!isset($_SESSION["access_token"])){
 
                         }
                         });
-                         
                      })
-					        
 					}
 				});
                 }
