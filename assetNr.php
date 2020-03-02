@@ -51,14 +51,14 @@ if(!isset($_SESSION["access_token"])){
           </div>
           <div class="sidebar-wrapper">
             <ul class="nav">
-              <li class="nav-item active">
+              <li class="nav-item">
                 <a class="nav-link" href="serialNr.php">
                   <i class="material-icons">dashboard</i>
                   <p class="whiteFont">Seriennummern</p>
                 </a>
               </li>
               <!-- your sidebar here -->
-              <li class="nav-item">
+              <li class="nav-item active">
                 <a class="nav-link" href="assetNr.php">
                   <i class="material-icons whiteFont">dashboard</i>
                   <p class="whiteFont">Anlagenummern</p>
@@ -78,7 +78,7 @@ if(!isset($_SESSION["access_token"])){
           <nav class="navbar navbar-expand-lg navbar-transparent navbar-absolute fixed-top ">
             <div class="container-fluid">
               <div class="navbar-wrapper">
-                <a class="navbar-brand" href="javascript:;">Seriennummern</a>
+                <a class="navbar-brand" href="javascript:;">Anlagenummer</a>
               </div>
             </div>
           </nav>
@@ -92,7 +92,7 @@ if(!isset($_SESSION["access_token"])){
                       <div class="card">
                           <div class="card-header card-header-text card-header-primary">
                             <div class="card-text">
-                              <h4 class="card-title">Nach einer Seriennummer suchen</h4>
+                              <h4 class="card-title">Nach einer Anlagenummer suchen</h4>
                             </div>
                           </div>
                           <div class="card-body">
@@ -100,8 +100,8 @@ if(!isset($_SESSION["access_token"])){
                                   <div class="row">
                                       <div class="col-md-1"></div>
                                       <div class="col-md-5">
-                                    <label for="inputSerial">Seriennummer</label>
-                                    <input type="text" class="form-control" id="inputSerial" placeholder="" value="ZURFAZE">
+                                    <label for="inputAsset">Anlagenummer</label>
+                                    <input type="text" class="form-control" id="inputAsset" placeholder="" value="124">
                                           </div>
                                       <div class="col-md-3"></div>
                                       <div class="col-md-3">
@@ -138,14 +138,14 @@ if(!isset($_SESSION["access_token"])){
                 //Suchen-Button aktivieren
                 $("#suchen").on("click", function(){
                     //Funktion zur AJAX-Abfrage aufrufen
-                    getDetails();
+                    getAsset();
                 })
                 
-                //Funktion holt Details zur Seriennummer
-                function getDetails(){
+                //Funktion holt Details zur Anlagenummer
+                function getAsset(){
                     //Wert aus Inputfeld lesen
                     //Quelle: https://api.jquery.com/val/
-                    var serialNr = $("#inputSerial").val();
+                    var assetNr = $("#inputAsset").val();
                     
                     //AJAX-Request an apiHandler.php
                     //Quelle: Schulprojekt "Waluegemer" => https://waluegemer.derbeton.ch/
@@ -154,8 +154,8 @@ if(!isset($_SESSION["access_token"])){
                         url: 'apiHandler.php',
                         data: {
                             //Seriennummer und Aufgabe für apiHandler mitschicken
-                            serialNr: serialNr,
-                            task: 'getDetails',
+                            assetNr: assetNr,
+                            task: 'getAsset',
 					},
 					success: function (response) {
 					 //War die Übertragung erfolgreich, wird folgender Code ausgeführt
@@ -163,82 +163,10 @@ if(!isset($_SESSION["access_token"])){
                      //Antwort anzeigen
 					 $('#details').html(response);
                      
-                     //Speichern-Button aktivieren
-                     $('#speichern').on('click', function(){
-                         //Speichern einleiten
-                         postDetails();
-                     })
-                     
-                     //Überprüfe, wann sich der Status ändert
-                     $('#inputStatus').on("change", function(){
-                         //Status hat sich geändert, Lagerorte müssen neu ausgelesen werden
-                         
-                         //Lese Status-Name, nicht ID!, aus dem Formular
-                         //Quelle: https://stackoverflow.com/questions/6454016/get-text-of-the-selected-option-with-jquery/6454073
-                         var status = $('#inputStatus option:selected').html();
-                         
-                        //AJAX-Request an apiHandler.php
-                        //Quelle: Schulprojekt "Waluegemer" => https://waluegemer.derbeton.ch/
-                        $.ajax({
-                            type: 'post',
-                            url: 'apiHandler.php',
-                            data: {
-                                //Details und Aufgabe für apiHandler mitschicken
-                                status: status,
-                                task: 'updateStock',
-                        },
-                        success: function (response) {
-                         //War die Übertragung erfolgreich, wird folgender Code ausgeführt
-
-                        //Select-Option Elemente ersetzen
-                        $("#inputLagerort").html(response);
-
-                        }
-                        });
-                         
-                     })
 					        
 					}
 				});
                 }
-
-                //Funktion speichert Details der Seriennummer
-                function postDetails(){
-                    
-                    //Details auslesen
-                    //Quelle: https://johannesdienst.net/jquery-data-attribute-auslesen/
-                    var serialId = $('#serialId').data('serial');
-                    var statusId = $('#inputStatus').val();
-                    var lagerortId = $('#inputLagerort').val();
-                    
-                    //RFID-Tag auslesen, ID und Name
-                    var tagId = $('#inputTag').attr('data-tag');
-                    var tagName = $('#inputTag').val();
-                    
-                    //AJAX-Request an apiHandler.php
-                    //Quelle: Schulprojekt "Waluegemer" => https://waluegemer.derbeton.ch/
-                    $.ajax({
-                        type: 'post',
-                        url: 'apiHandler.php',
-                        data: {
-                            //Details und Aufgabe für apiHandler mitschicken
-                            serialId: serialId,
-                            statusId: statusId,
-                            lagerortId: lagerortId,
-                            tagId: tagId,
-                            tagName: tagName,
-                            task: 'postDetails',
-					},
-					success: function (response) {
-					 //War die Übertragung erfolgreich, wird folgender Code ausgeführt
-                        
-                    //Kurze Meldung geben, dass es geklappt hat
-                    alert(response);
-                        
-					}
-				    });
-                }
-
             })
       </script>
     </body>

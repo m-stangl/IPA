@@ -38,8 +38,18 @@ if(isset($_POST["task"]) && $_POST["task"] == "getDetails"){
     
     //updateStock ausführen mit den Argumenten "access_token" und "status"
     updateStock($access_token, $status);
+}elseif(isset($_POST["task"]) && $_POST["task"] == "getAsset"){
+    
+    //Anlagenummer auslesen, damit sie der Funktion übergeben werden kann
+    $assetNr = $_POST["assetNr"];
+    
+    //getAsset ausführen mit den Argumenten "access_token" und "assetNr"
+    getAsset($access_token, $assetNr);
 }
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////    FUNKTION GETDETAILS                                                                                                                                                                                 ////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 function getDetails($access_token, $serialNr){
     
@@ -240,7 +250,7 @@ function getDetails($access_token, $serialNr){
         $antwort .= '</div>';
         $antwort .= '<div class="col-md-2"></div>';
         
-        
+        //Antwort zurückschicken
         echo $antwort;
     }else{
         //Gerät wurde nicht gefunden
@@ -248,6 +258,10 @@ function getDetails($access_token, $serialNr){
     }
     
 }
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////    FUNKTION POSTDETAILS                                                                                                                                                                                ////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 function postDetails($access_token, $serialId, $statusId, $lagerortId, $tagId, $tagName){
     
@@ -384,4 +398,146 @@ function updateStock($access_token, $status){
     
 }
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////    FUNKTION GETASSET                                                                                                                                                                                   ////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+function getAsset($access_token, $assetNr){
+    //Alle Infos zur Anlagenummer auslesen
+    
+    //Code-Snippet aus dem Postman
+    $curl = curl_init();
+
+    curl_setopt_array($curl, array(
+      CURLOPT_URL => "https://iwc.ios-business-apps.com/api/iwc/report/asset/$assetNr",
+      CURLOPT_RETURNTRANSFER => true,
+      CURLOPT_ENCODING => "",
+      CURLOPT_MAXREDIRS => 10,
+      CURLOPT_TIMEOUT => 0,
+      CURLOPT_FOLLOWLOCATION => true,
+      CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+      CURLOPT_CUSTOMREQUEST => "GET",
+      CURLOPT_HTTPHEADER => array(
+        "Authorization: Bearer $access_token"
+      ),
+    ));
+
+    $asset = curl_exec($curl);
+
+    curl_close($curl);
+    //Ende vom Code-Snippet
+    
+    $assetArray = json_decode($asset);
+    
+    //Prüfen, ob Anlagenummer gefunden wurde
+    if($assetArray->count !== 0){
+        //Anlagenummer existiert und ein oder mehr Geräte darin
+        
+        //Antwort aufbauen
+        $antwort  = '<div class="col-md-2"></div>';
+        $antwort .= '<div class="col-md-8">';
+        $antwort .=     '<div class="card">';
+        $antwort .=         '<div class="card-header card-header-text card-header-primary">';
+        $antwort .=             '<div class="card-text">';
+        //Anlagenummer und Anzahl Geräte auf gleicher Zeile anzeigen
+        //Quelle: https://stackoverflow.com/questions/12438339/how-may-i-align-text-to-the-left-and-text-to-the-right-in-the-same-line
+        $antwort .=                 '<h4 class="card-title" style="display: inline-block">' . $assetNr . '</h4>';
+        //Tab zwischen Text und Nummer
+        //Quelle: https://www.quora.com/How-do-you-add-a-tab-space-in-HTML
+        $antwort .=                 '<h4 class="card-title" style="display: inline-block;float:right;">Anzahl Geräte:&nbsp&nbsp&nbsp&nbsp' . $assetArray->count . '</h4>';
+        $antwort .=             '</div>';
+        $antwort .=         '</div>';
+        $antwort .=         '<div class="card-body"><br>';
+        //Card-body
+        
+        //Geräte pro Status ausgeben
+        
+        //Prüfen, ob Geräte Status "IT" haben
+        if($assetArray->countIt !== 0){
+            //Es existieren Geräte mit Status "IT" in dieser Anlagenummer
+            $antwort .= '<h4 style="display:inline-block">Status "IT"</h4>';
+            $antwort .= '<h4 style="display:inline-block;float:right;">Anzahl Geräte:&nbsp&nbsp&nbsp&nbsp' . $assetArray->countIt . '</h4> <br>';
+            
+            //Tabelle erstellen
+            $antwort .= '<table class="table">';
+            $antwort .=     '<thead>';
+            $antwort .=         '<th>Seriennummer</th>';
+            $antwort .=         '<th class="text-right">Bezeichnung</th>';
+            $antwort .=     '</thead>';
+            $antwort .=     '<tbody>';
+            
+            //Jedes Gerät vom Status "IT" auslesen
+            //Quelle: https://www.w3schools.com/php/php_looping_foreach.asp
+            foreach($assetArray->articlesIt as $value){
+                $antwort .=     '<td>' . $value->serialNumber . '</td>';
+                $antwort .=     '<td class="text-right">' . $value->master->description . '</td>';
+            }
+            $antwort .=     '</tbody>';
+            $antwort .= '</table><br>';
+        }
+        
+        //Prüfen, ob Geräte Status "Extern" haben
+        if($assetArray->countExtern !== 0){
+            //Es existieren Geräte mit Status "Extern" in dieser Anlagenummer
+            $antwort .= '<h4 style="display:inline-block">Status "Extern"</h4>';
+            $antwort .= '<h4 style="display:inline-block;float:right;">Anzahl Geräte:&nbsp&nbsp&nbsp&nbsp' . $assetArray->countExtern . '</h4> <br>';
+            
+            //Tabelle erstellen
+            $antwort .= '<table class="table">';
+            $antwort .=     '<thead>';
+            $antwort .=         '<th>Seriennummer</th>';
+            $antwort .=         '<th class="text-right">Bezeichnung</th>';
+            $antwort .=     '</thead>';
+            $antwort .=     '<tbody>';
+            
+            //Jedes Gerät vom Status "Extern" auslesen
+            //Quelle: https://www.w3schools.com/php/php_looping_foreach.asp
+            foreach($assetArray->articlesExtern as $value){
+                $antwort .=     '<td>' . $value->serialNumber . '</td>';
+                $antwort .=     '<td class="text-right">' . $value->master->description . '</td>';
+            }
+            $antwort .=     '</tbody>';
+            $antwort .= '</table><br>';
+        }
+        
+        //Prüfen, ob Geräte Status "IWC" haben
+        if($assetArray->countIwc !== 0){
+            //Es existieren Geräte mit Status "IWC" in dieser Anlagenummer
+            $antwort .= '<h4 style="display:inline-block">Status "IWC"</h4>';
+            $antwort .= '<h4 style="display:inline-block;float:right;">Anzahl Geräte:&nbsp&nbsp&nbsp&nbsp' . $assetArray->countIwc . '</h4> <br>';
+            
+            //Tabelle erstellen
+            $antwort .= '<table class="table">';
+            $antwort .=     '<thead>';
+            $antwort .=         '<th>Seriennummer</th>';
+            $antwort .=         '<th class="text-right">Bezeichnung</th>';
+            $antwort .=     '</thead>';
+            $antwort .=     '<tbody>';
+            
+            //Jedes Gerät vom Status "IWC" auslesen
+            //Quelle: https://www.w3schools.com/php/php_looping_foreach.asp
+            foreach($assetArray->articlesIwc as $value){
+                $antwort .=     '<td>' . $value->serialNumber . '</td>';
+                $antwort .=     '<td class="text-right">' . $value->master->description . '</td>';
+            }
+            $antwort .=     '</tbody>';
+            $antwort .= '</table><br>';
+        }
+        
+        //Card-body Ende
+        $antwort .=         '</div>';
+        //Card schliessen
+        $antwort .=     '</div>';
+        //Column schliessen
+        $antwort .= '</div>';
+        $antwort .= '<div class="col-md-2"></div>';
+        
+        //Antwort zurückschicken
+        echo $antwort;
+        
+    }else{
+        //Anlagenummer existiert nicht oder beinhaltet keine Geräte
+        echo "sry man gits nid";
+    }
+}
 ?>
