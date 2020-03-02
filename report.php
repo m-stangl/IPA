@@ -58,13 +58,13 @@ if(!isset($_SESSION["access_token"])){
                 </a>
               </li>
               <!-- your sidebar here -->
-              <li class="nav-item active">
+              <li class="nav-item">
                 <a class="nav-link" href="assetNr.php">
                   <i class="material-icons whiteFont">dashboard</i>
                   <p class="whiteFont">Anlagenummern</p>
                 </a>
               </li>
-                <li class="nav-item">
+                <li class="nav-item active">
                 <a class="nav-link" href="report.php">
                   <i class="material-icons">dashboard</i>
                   <p class="whiteFont">Report</p>
@@ -78,7 +78,7 @@ if(!isset($_SESSION["access_token"])){
           <nav class="navbar navbar-expand-lg navbar-transparent navbar-absolute fixed-top ">
             <div class="container-fluid">
               <div class="navbar-wrapper">
-                <a class="navbar-brand" href="javascript:;">Anlagenummer</a>
+                <a class="navbar-brand" href="javascript:;">Report Anlagenummern</a>
               </div>
             </div>
           </nav>
@@ -86,7 +86,7 @@ if(!isset($_SESSION["access_token"])){
           <div class="content">
             <div class="container-fluid">
               <!-- your content here -->
-                <div class="row">
+                <div class="row" id="report">
                   <div class="col-md-2"></div>
                   <div class="col-md-8">
                       <div class="card">
@@ -114,7 +114,6 @@ if(!isset($_SESSION["access_token"])){
                   </div>
                   <div class="col-md-2"></div>
                 </div>
-                <div class="row" id="details"></div>
               
             </div>
           </div>
@@ -141,27 +140,23 @@ if(!isset($_SESSION["access_token"])){
                     getAsset();
                 })
                 
-                //Funktion holt Details zur Anlagenummer
-                function getAsset(){
-                    //Wert aus Inputfeld lesen
-                    //Quelle: https://api.jquery.com/val/
-                    var assetNr = $("#inputAsset").val();
-                    
+                //Funktion holt Report
+                function getReport(){
+                                        
                     //AJAX-Request an apiHandler.php
                     //Quelle: Schulprojekt "Waluegemer" => https://waluegemer.derbeton.ch/
                     $.ajax({
                         type: 'post',
                         url: 'apiHandler.php',
                         data: {
-                            //Anlagenummer und Aufgabe für apiHandler mitschicken
-                            assetNr: assetNr,
-                            task: 'getAsset',
+                            //Aufgabe für apiHandler schicken
+                            task: 'getReport',
 					},
 					success: function (response) {
 					 //War die Übertragung erfolgreich, wird folgender Code ausgeführt
                         
                      //Antwort anzeigen
-					 $('#details').html(response);
+					 $('#report').html(response);
                      
 					        
 					}
