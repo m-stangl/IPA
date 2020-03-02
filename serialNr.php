@@ -101,7 +101,11 @@ if(!isset($_SESSION["access_token"])){
                                       <div class="col-md-1"></div>
                                       <div class="col-md-5">
                                     <label for="inputSerial">Seriennummer</label>
-                                    <input type="text" class="form-control" id="inputSerial" placeholder="" value="ZURFAZE">
+                                    <input type="text" class="form-control" id="inputSerial" placeholder="" <?php //Wert ins Suchfeld geben, falls man über Link auf diese Seite kommt
+                                           if(isset($_GET['serialNr'])){
+                                               echo "value='" . $_GET['serialNr'] . "'";
+                                           }
+                                           ?>>
                                           </div>
                                       <div class="col-md-3"></div>
                                       <div class="col-md-3">
@@ -137,15 +141,38 @@ if(!isset($_SESSION["access_token"])){
                 
                 //Suchen-Button aktivieren
                 $("#suchen").on("click", function(){
-                    //Funktion zur AJAX-Abfrage aufrufen
-                    getDetails();
+                    //Funktion zur AJAX-Abfrage aufrufen mit false als Argument
+                    getDetails(false);
                 })
                 
+                <?php 
+                //Wenn man auf einen Link auf diese Seite kommt, steht Seriennummer in der URL
+                //Details müssen beim Aufrufen sofort abgefragt und angezeigt werden
+                
+                if(isset($_GET['serialNr'])){
+                    
+                    //Wert auslesen
+                    $serialNr = $_GET['serialNr'];
+                    //Funktion ausführen mit true als Argument
+                    echo "getDetails(true)";
+                }
+                    ?>
+                
                 //Funktion holt Details zur Seriennummer
-                function getDetails(){
-                    //Wert aus Inputfeld lesen
-                    //Quelle: https://api.jquery.com/val/
-                    var serialNr = $("#inputSerial").val();
+                function getDetails(getOrNot){
+                    
+                    //Prüfen, ob der Wert aus der URL oder dem Suchfeld genommen wird
+                    if (getOrNot) {
+                        //Wert aus der URL
+                        <?php
+                        echo "var serialNr = '" . $serialNr . "';";
+                        ?>
+                        
+                    } else {
+                        //Wert aus Inputfeld lesen
+                        //Quelle: https://api.jquery.com/val/
+                        var serialNr = $("#inputSerial").val();
+                    }
                     
                     //AJAX-Request an apiHandler.php
                     //Quelle: Schulprojekt "Waluegemer" => https://waluegemer.derbeton.ch/
