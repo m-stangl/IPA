@@ -53,20 +53,20 @@ if(!isset($_SESSION["access_token"])){
             <ul class="nav">
               <li class="nav-item">
                 <a class="nav-link" href="serialNr.php">
-                  <i class="material-icons">dashboard</i>
+                  <i class="material-icons">devices</i>
                   <p class="whiteFont">Seriennummern</p>
                 </a>
               </li>
               <!-- your sidebar here -->
               <li class="nav-item">
                 <a class="nav-link" href="assetNr.php">
-                  <i class="material-icons whiteFont">dashboard</i>
+                  <i class="material-icons whiteFont">description</i>
                   <p class="whiteFont">Anlagenummern</p>
                 </a>
               </li>
                 <li class="nav-item active">
                 <a class="nav-link" href="report.php">
-                  <i class="material-icons">dashboard</i>
+                  <i class="material-icons">report</i>
                   <p class="whiteFont">Report</p>
                 </a>
               </li>
@@ -75,7 +75,8 @@ if(!isset($_SESSION["access_token"])){
         </div>
         <div class="main-panel">
           <!-- Navbar -->
-          <nav class="navbar navbar-expand-lg navbar-transparent navbar-absolute fixed-top ">
+          <!-- Muss in den Hintergrund für Logout-Button, Quelle: https://stackoverflow.com/questions/15782078/bring-element-to-front-using-css -->
+          <nav class="navbar navbar-expand-lg navbar-transparent navbar-absolute fixed-top" style="z-index:-1">
             <div class="container-fluid">
               <div class="navbar-wrapper">
                 <a class="navbar-brand" href="javascript:;">Report Anlagenummern</a>
