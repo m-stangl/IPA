@@ -45,6 +45,10 @@ if(isset($_POST["task"]) && $_POST["task"] == "getDetails"){
     
     //getAsset ausführen mit den Argumenten "access_token" und "assetNr"
     getAsset($access_token, $assetNr);
+}elseif(isset($_POST["task"]) && $_POST["task"] == "getReport"){
+    
+    //getAsset ausführen mit dem Argument "access_token"
+    getReport($access_token);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -357,6 +361,10 @@ function postDetails($access_token, $serialId, $statusId, $lagerortId, $tagId, $
         
 }
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////    FUNKTION UPDATESTOCK                                                                                                                                                                                   ////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 function updateStock($access_token, $status){
     
     //Alle Lagerorte zum Status auslesen
@@ -427,6 +435,7 @@ function getAsset($access_token, $assetNr){
     curl_close($curl);
     //Ende vom Code-Snippet
     
+    //JSON-Objekt in ein PHP-Array umwandeln
     $assetArray = json_decode($asset);
     
     //Prüfen, ob Anlagenummer gefunden wurde
@@ -539,5 +548,86 @@ function getAsset($access_token, $assetNr){
         //Anlagenummer existiert nicht oder beinhaltet keine Geräte
         echo "sry man gits nid";
     }
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////    FUNKTION GETREPORT                                                                                                                                                                                 ////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+function getReport($access_token){
+    
+    //Alle Anlagenummern auflisten, deren Geräte den Status "Extern" haben
+    
+    //Code-Snippet aus dem Postman
+    $curl = curl_init();
+
+    curl_setopt_array($curl, array(
+      CURLOPT_URL => "https://iwc.ios-business-apps.com/api/iwc/report/external",
+      CURLOPT_RETURNTRANSFER => true,
+      CURLOPT_ENCODING => "",
+      CURLOPT_MAXREDIRS => 10,
+      CURLOPT_TIMEOUT => 0,
+      CURLOPT_FOLLOWLOCATION => true,
+      CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+      CURLOPT_CUSTOMREQUEST => "GET",
+      CURLOPT_HTTPHEADER => array(
+        "Authorization: Bearer $access_token"
+      ),
+    ));
+
+    $report = curl_exec($curl);
+
+    curl_close($curl);
+    //Ende vom Code-Snippet
+    
+    //JSON-Objekt in ein PHP-Array umwandeln
+    $reportArray = json_decode($report);
+   
+    //Alle Anlagenummern und Geräteanzahl ausgeben
+    
+    //Antwort aufbauen
+    
+    $antwort  = '<div class="col-md-2"></div>';
+    $antwort .= '<div class="col-md-8">';
+    $antwort .=     '<div class="card">';
+    $antwort .=         '<div class="card-header card-header-text card-header-primary">';
+    $antwort .=             '<div class="card-text">';
+
+    $antwort .=                 '<h4 class="card-title">Report Anlagenummern "Extern"</h4>';
+    $antwort .=             '</div>';
+    $antwort .=         '</div>';
+    $antwort .=         '<div class="card-body"><br>';
+    //Card-body
+    
+    //Tabelle erstellen
+    $antwort .= '<table class="table">';
+    $antwort .=     '<thead>';
+    $antwort .=         '<th>Anlagenummer</th>';
+    $antwort .=         '<th class="text-right">Anzahl Geräte</th>';
+    $antwort .=     '</thead>';
+    $antwort .=     '<tbody>';
+    
+    //Anlagenummern auflisten
+    foreach($reportArray as $val){
+        $antwort .= "<tr>";
+        $antwort .=     "<td>" . $val->assetNumber . "</td>";
+        $antwort .=     "<td class='text-right'>" . $val->countItems . "</td>";
+        $antwort .= "</tr>";
+    }
+    $antwort .=     '</tbody>';
+    $antwort .= '</table><br>';
+    
+    //Card-body Ende
+    $antwort .=         '</div>';
+    //Card schliessen
+    $antwort .=     '</div>';
+    //Column schliessen
+    $antwort .= '</div>';
+    $antwort .= '<div class="col-md-2"></div>';
+
+    //Antwort zurückschicken
+    echo $antwort;
+    
+    
 }
 ?>

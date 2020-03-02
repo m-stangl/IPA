@@ -87,32 +87,7 @@ if(!isset($_SESSION["access_token"])){
             <div class="container-fluid">
               <!-- your content here -->
                 <div class="row" id="report">
-                  <div class="col-md-2"></div>
-                  <div class="col-md-8">
-                      <div class="card">
-                          <div class="card-header card-header-text card-header-primary">
-                            <div class="card-text">
-                              <h4 class="card-title">Nach einer Anlagenummer suchen</h4>
-                            </div>
-                          </div>
-                          <div class="card-body">
-                              <br>
-                                  <div class="row">
-                                      <div class="col-md-1"></div>
-                                      <div class="col-md-5">
-                                    <label for="inputAsset">Anlagenummer</label>
-                                    <input type="text" class="form-control" id="inputAsset" placeholder="" value="124">
-                                          </div>
-                                      <div class="col-md-3"></div>
-                                      <div class="col-md-3">
-                                        <button type="button" class="btn btn-primary" id="suchen">Suchen</button>
-                                      </div>
-                                  </div>
-                              <br>
-                          </div>
-                      </div>
-                  </div>
-                  <div class="col-md-2"></div>
+                  
                 </div>
               
             </div>
@@ -135,10 +110,12 @@ if(!isset($_SESSION["access_token"])){
                 })
                 
                 //Suchen-Button aktivieren
-                $("#suchen").on("click", function(){
+                $("#aktualisieren").on("click", function(){
                     //Funktion zur AJAX-Abfrage aufrufen
-                    getAsset();
+                    getReport();
                 })
+                
+                getReport();
                 
                 //Funktion holt Report
                 function getReport(){
