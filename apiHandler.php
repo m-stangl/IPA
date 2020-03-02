@@ -610,7 +610,7 @@ function getReport($access_token){
     //Anlagenummern auflisten
     foreach($reportArray as $val){
         $antwort .= "<tr>";
-        $antwort .=     "<td>" . $val->assetNumber . "</td>";
+        $antwort .=     "<td><a href='assetNr.php?assetNr=" . $val->assetNumber . "'>". $val->assetNumber . "</a></td>";
         $antwort .=     "<td class='text-right'>" . $val->countItems . "</td>";
         $antwort .= "</tr>";
     }
@@ -627,7 +627,6 @@ function getReport($access_token){
 
     //Antwort zurückschicken
     echo $antwort;
-    
     
 }
 ?>

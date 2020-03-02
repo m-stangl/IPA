@@ -101,7 +101,11 @@ if(!isset($_SESSION["access_token"])){
                                       <div class="col-md-1"></div>
                                       <div class="col-md-5">
                                     <label for="inputAsset">Anlagenummer</label>
-                                    <input type="text" class="form-control" id="inputAsset" placeholder="" value="124">
+                                    <input type="text" class="form-control" id="inputAsset" placeholder="" <?php //Wert ins Suchfeld geben, falls man über Link auf diese Seite kommt
+                                           if(isset($_GET['assetNr'])){
+                                               echo "value='" . $_GET['assetNr'] . "'";
+                                           }
+                                           ?>>
                                           </div>
                                       <div class="col-md-3"></div>
                                       <div class="col-md-3">
@@ -141,11 +145,35 @@ if(!isset($_SESSION["access_token"])){
                     getAsset();
                 })
                 
+                <?php 
+                //Wenn man auf einen Link auf diese Seite kommt, steht Seriennummer in der URL
+                //Details müssen beim Aufrufen sofort abgefragt und angezeigt werden
+                
+                if(isset($_GET['assetNr'])){                    
+                    //Funktion ausführen mit true als Argument
+                    echo "getAsset(true)";
+                }
+                ?>
+                
                 //Funktion holt Details zur Anlagenummer
-                function getAsset(){
-                    //Wert aus Inputfeld lesen
-                    //Quelle: https://api.jquery.com/val/
-                    var assetNr = $("#inputAsset").val();
+                function getAsset(getOrNot){
+                    
+                    //Prüfen, ob der Wert aus der URL oder dem Suchfeld genommen wird
+                    if (getOrNot) {
+                        //Wert aus der URL
+                        <?php                        
+                        if(isset($_GET['assetNr'])){
+                            //Variable in JS-Code übergeben
+                            echo "var assetNr = '" . $_GET['assetNr'] . "';";
+                        }
+                        ?>
+                    } else {
+                        //Wert aus Inputfeld lesen
+                        //Quelle: https://api.jquery.com/val/
+                        var assetNr = $("#inputAsset").val();
+                    }
+                    
+                    
                     
                     //AJAX-Request an apiHandler.php
                     //Quelle: Schulprojekt "Waluegemer" => https://waluegemer.derbeton.ch/
