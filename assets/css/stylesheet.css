@@ -1,10 +1,12 @@
 /* Eigene CSS-Datei für Anpassungen */
 
+/*Farbverlauf-Ding soll über die ganze Breite der Card gehen*/
 .card-text {
     width: 100%;
 }
 
-/*Titel der Card zentrieren*/
+/*Titel der Card zentrieren
+Quelle: https://stackoverflow.com/questions/5703552/css-center-text-horizontally-and-vertically-inside-a-div-block*/
 #cardTitleLogin {
     text-align: center;
 }
@@ -15,7 +17,9 @@ html, body {
     height: 100%;
 }
 
-/*Hintergrundbild*/
+/*Hintergrundbild
+Quelle Bild: https://www.iwc.com/ch/de/home.html
+Quelle CSS-Attribute: https://www.w3schools.com/cssref/pr_background-image.asp*/
 .backgroundWatch {
     background-image: url(../img/background.webp);
     background-repeat: no-repeat;
@@ -24,12 +28,14 @@ html, body {
     
 }
 
+/*Für Login und Übersicht, wenn der Hintergrund die ganze Breite braucht*/
 .fullBg {
     position: absolute;
     height: 100%;
     width: 100%;
 }
 
+/*Durchsichte Schicht über dem Hintergrundbild*/
 .transparentLayer {
     background-color: #3E3D40;
     opacity: 0.8;
@@ -40,15 +46,19 @@ html, body {
     height: 100%;
 }
 
+/*Wenn die Schicht Schwarz und nicht grau sein muss*/
 .dark {
     background-color: black;
 }
 
+/*Inputfelder vom Login-Formular in die Mitte bringen*/
 .loginInputs {
     width: 50%;
     left: 25%;
 }
 
+/*Logout-Button oben rechts in der Ecke fixieren
+Quelle: Schulprojekt "Tesla"*/
 .logout {
     position: absolute;
     top: 0;
@@ -64,19 +74,22 @@ Quelle: https://css-tricks.com/centering-css-complete-guide/ */
     transform: translate(-50%, -50%);
 }
 
+/*Schriftfarbe weiss, nur Grossbuchstaben war drin
+Quelle: https://www.w3schools.com/cssref/pr_text_text-transform.asp*/
 .whiteFont, #weiss {
     color: white;
     text-transform: none;
 }
 
-/* IWC-Logo*/
+/* IWC-Logo zentrieren
+Quelle: https://stackoverflow.com/questions/4888223/align-image-in-center-and-middle-within-div*/
 .logo-wrapper img{
     display: block;
     margin-left: auto;
     margin-right: auto;
 }
 
+/*Logo-Höhe definieren*/
 #logo {
     height: 50px;
 }
-/* IWC-Logo Ende*/

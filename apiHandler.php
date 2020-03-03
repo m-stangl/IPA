@@ -27,7 +27,15 @@ if(isset($_POST["task"]) && $_POST["task"] == "getDetails"){
     $serialId = $_POST["serialId"];
     $statusId = $_POST["statusId"];
     $lagerortId = $_POST["lagerortId"];
-    $tagId = $_POST["tagId"];
+    
+    //Anpassungen aus Test T-007
+    if(isset($_POST["tagId"])){
+        $tagId = $_POST["tagId"];
+    }else{
+        //tagId definieren, falls sie noch nicht existiert
+        $tagId = "";
+    }
+    
     $tagName = $_POST["tagName"];
     
     //postDetails ausführen mit "access_token" und allen Details als Argumente
