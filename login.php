@@ -49,6 +49,27 @@ if(isset($_POST["username"]) && isset($_POST["password"])){
         
         //Umleiten auf die Übersicht
         header("Location: uebersicht.php");
+    }else{
+        
+        //Login nicht erfolgreich, Fehlercode auslesen
+        if(isset($responseArray['code'])){            
+            $error_code = $responseArray['code'];
+            
+            
+            if($error_code == "LOGIN_FAILED"){
+                
+                //Falsches Kennwort
+                echo "<script>console.log('login failed');</script>";
+                $_POST['error'] = "Das Kennwort $password ist nicht korrekt.";
+                
+            }elseif($error_code == "USER_NOT_FOUND"){
+                
+                //Benutzer existiert nicht
+                echo "<script>console.log('user not found');</script>";
+                $_POST['error'] = "Der Benutzer $username wurde nicht gefunden.";
+                
+            }
+        }
     }
 }
 ?>
@@ -66,6 +87,9 @@ if(isset($_POST["username"]) && isset($_POST["password"])){
     <link href="assets/css/material-dashboard.css?v=2.1.2" rel="stylesheet" />
     <!-- Eigenes CSS einbinden -->
     <link rel="stylesheet" href="assets/css/stylesheet.css" />
+    <!--    jQuery-Bibliothek einbinden
+        Quelle: https://www.w3schools.com/jquery/jquery_get_started.asp -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
   </head>
   <body class="backgroundWatch fullBg">
       <div class="transparentLayer dark">
@@ -109,5 +133,33 @@ if(isset($_POST["username"]) && isset($_POST["password"])){
           <div class="col"></div>
         </div>
       </div>
+      
+        <?php 
+          if(isset($_POST['error'])){
+              
+              $alert = '<div class="alert alert-danger alert-dismissible fade show" role="alert" style="display:none;">';
+              $alert .= $_POST['error'];
+              $alert .= '<button type="button" class="close" data-dismiss="alert" aria-label="Close">';
+              $alert .=     '<span aria-hidden="true">&times;</span>';
+              $alert .= '</button>';
+              $alert .= '</div>';
+              echo $alert;
+              
+          }
+          ?>
+        
+      <script>
+            $(document).ready(function(){
+                
+                <?php
+                    if(isset($_POST['error'])){
+                        echo '$(".alert").slideDown();';
+                    }
+                ?>
+                $(".alert button").on("click", function(){
+                    $(".alert").slideUp();
+                })
+            })
+      </script>
   </body>
 </html>
