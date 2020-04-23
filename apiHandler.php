@@ -495,8 +495,8 @@ function getAsset($access_token, $assetNr){
             //Jedes Gerät vom Status "IT" auslesen
             //Quelle: https://www.w3schools.com/php/php_looping_foreach.asp
             foreach($assetArray->articlesIt as $value){
-                $antwort .=     '<td><a href="links.php?serialNr=' . $value->serialNumber . '">' . $value->serialNumber . '</a></td>';
-                $antwort .=     '<td class="text-right">' . $value->master->description . '</td>';
+                $antwort .=     '<tr><td><a href="links.php?serialNr=' . $value->serialNumber . '">' . $value->serialNumber . '</a></td>';
+                $antwort .=     '<td class="text-right">' . $value->master->description . '</td></tr>';
             }
             $antwort .=     '</tbody>';
             $antwort .= '</table><br>';
@@ -519,8 +519,8 @@ function getAsset($access_token, $assetNr){
             //Jedes Gerät vom Status "Extern" auslesen
             //Quelle: https://www.w3schools.com/php/php_looping_foreach.asp
             foreach($assetArray->articlesExtern as $value){
-                $antwort .=     '<td><a href="links.php?serialNr=' . $value->serialNumber . '">' . $value->serialNumber . '</a></td>';
-                $antwort .=     '<td class="text-right">' . $value->master->description . '</td>';
+                $antwort .=     '<tr><td><a href="links.php?serialNr=' . $value->serialNumber . '">' . $value->serialNumber . '</a></td>';
+                $antwort .=     '<td class="text-right">' . $value->master->description . '</td></tr>';
             }
             $antwort .=     '</tbody>';
             $antwort .= '</table><br>';
@@ -543,8 +543,8 @@ function getAsset($access_token, $assetNr){
             //Jedes Gerät vom Status "IWC" auslesen
             //Quelle: https://www.w3schools.com/php/php_looping_foreach.asp
             foreach($assetArray->articlesIwc as $value){
-                $antwort .=     '<td><a href="links.php?serialNr=' . $value->serialNumber . '">' . $value->serialNumber . '</a></td>';
-                $antwort .=     '<td class="text-right">' . $value->master->description . '</td>';
+                $antwort .=     '<tr><td><a href="links.php?serialNr=' . $value->serialNumber . '">' . $value->serialNumber . '</a></td>';
+                $antwort .=     '<td class="text-right">' . $value->master->description . '</td></tr>';
             }
             $antwort .=     '</tbody>';
             $antwort .= '</table><br>';
