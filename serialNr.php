@@ -141,6 +141,14 @@ if(!isset($_SESSION["access_token"])){
                     getDetails(false);
                 })
                 
+                //Suche mit Enter starten
+                $("#inputSerial").on("keyup", function(e){
+                    //Prüfen, ob Enter gedrückt wurde
+                    if(e.which == 13){
+                        getDetails(false);
+                    }
+                })
+                
                 <?php 
                 //Wenn man auf einen Link auf diese Seite kommt, steht Seriennummer in der Session-Variable
                 //Details müssen beim Aufrufen sofort abgefragt und angezeigt werden
