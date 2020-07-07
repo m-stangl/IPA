@@ -74,7 +74,7 @@ function getDetails($access_token, $serialNr){
     $curl = curl_init();
 
     curl_setopt_array($curl, array(
-      CURLOPT_URL => "https://iwc.ios-business-apps.com/api/iwc/serial/$serialNr",
+      CURLOPT_URL => "http://localhost:8080/api/iwc/serial/$serialNr",
       CURLOPT_RETURNTRANSFER => true,
       CURLOPT_ENCODING => "",
       CURLOPT_MAXREDIRS => 10,
@@ -145,7 +145,7 @@ function getDetails($access_token, $serialNr){
         $curl = curl_init();
 
         curl_setopt_array($curl, array(
-          CURLOPT_URL => "https://iwc.ios-business-apps.com/api/iwc/area",
+          CURLOPT_URL => "http://localhost:8080/api/iwc/area",
           CURLOPT_RETURNTRANSFER => true,
           CURLOPT_ENCODING => "",
           CURLOPT_MAXREDIRS => 10,
@@ -196,7 +196,7 @@ function getDetails($access_token, $serialNr){
         $curl = curl_init();
 
         curl_setopt_array($curl, array(
-          CURLOPT_URL => "https://iwc.ios-business-apps.com/api/iwc/area/$stockName",
+          CURLOPT_URL => "http://localhost:8080/api/iwc/area/$stockName",
           CURLOPT_RETURNTRANSFER => true,
           CURLOPT_ENCODING => "",
           CURLOPT_MAXREDIRS => 10,
@@ -289,7 +289,7 @@ function postDetails($access_token, $serialId, $statusId, $lagerortId, $tagId, $
     $curl = curl_init();
 
     curl_setopt_array($curl, array(
-      CURLOPT_URL => "https://iwc.ios-business-apps.com/api/iwc/tag/$tagName",
+      CURLOPT_URL => "http://localhost:8080/api/iwc/tag/$tagName",
       CURLOPT_RETURNTRANSFER => true,
       CURLOPT_ENCODING => "",
       CURLOPT_MAXREDIRS => 10,
@@ -323,7 +323,7 @@ function postDetails($access_token, $serialId, $statusId, $lagerortId, $tagId, $
         $curl = curl_init();
 
         curl_setopt_array($curl, array(
-          CURLOPT_URL => "https://iwc.ios-business-apps.com/api/iwc/item",
+          CURLOPT_URL => "http://localhost:8080/api/iwc/item",
           CURLOPT_RETURNTRANSFER => true,
           CURLOPT_ENCODING => "",
           CURLOPT_MAXREDIRS => 10,
@@ -351,7 +351,7 @@ function postDetails($access_token, $serialId, $statusId, $lagerortId, $tagId, $
         $curl = curl_init();
 
         curl_setopt_array($curl, array(
-          CURLOPT_URL => "https://iwc.ios-business-apps.com/api/iwc/item",
+          CURLOPT_URL => "http://localhost:8080/api/iwc/item",
           CURLOPT_RETURNTRANSFER => true,
           CURLOPT_ENCODING => "",
           CURLOPT_MAXREDIRS => 10,
@@ -388,7 +388,7 @@ function updateStock($access_token, $status){
     $curl = curl_init();
 
     curl_setopt_array($curl, array(
-      CURLOPT_URL => "https://iwc.ios-business-apps.com/api/iwc/area/$status",
+      CURLOPT_URL => "http://localhost:8080/api/iwc/area/$status",
       CURLOPT_RETURNTRANSFER => true,
       CURLOPT_ENCODING => "",
       CURLOPT_MAXREDIRS => 10,
@@ -433,7 +433,7 @@ function getAsset($access_token, $assetNr){
     $curl = curl_init();
 
     curl_setopt_array($curl, array(
-      CURLOPT_URL => "https://iwc.ios-business-apps.com/api/iwc/report/asset/$assetNr",
+      CURLOPT_URL => "http://localhost:8080/api/iwc/report/asset/$assetNr",
       CURLOPT_RETURNTRANSFER => true,
       CURLOPT_ENCODING => "",
       CURLOPT_MAXREDIRS => 10,
@@ -579,7 +579,7 @@ function getReport($access_token){
     $curl = curl_init();
 
     curl_setopt_array($curl, array(
-      CURLOPT_URL => "https://iwc.ios-business-apps.com/api/iwc/report/external",
+      CURLOPT_URL => "http://localhost:8080/api/iwc/report/external",
       CURLOPT_RETURNTRANSFER => true,
       CURLOPT_ENCODING => "",
       CURLOPT_MAXREDIRS => 10,
