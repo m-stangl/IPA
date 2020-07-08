@@ -218,9 +218,11 @@ function getDetails($access_token, $serialNr){
         //Quelle: https://www.w3schools.com/js/js_json_php.asp
         $stockArray = json_decode($stock);
         
-        //Reihenfolge der Objekte umkehren, damit sie nach foreach in der richtigen Reihenfolge kommen
-        //Quelle: https://www.w3schools.com/php/func_array_reverse.asp
-        $stockArray = array_reverse($stockArray);
+        //Objekte alphabetisch sortieren
+        //Quelle: https://stackoverflow.com/questions/4282413/sort-array-of-objects-by-object-fields
+        usort($stockArray, function($a, $b){
+            return strcmp($a->description, $b->description);
+        });
         
         //Alle Lagerorte durchgehen, Lagerort des Geräts auswählen und IDs als Value hinterlegen
         foreach($stockArray as $lagerorte){
@@ -410,9 +412,11 @@ function updateStock($access_token, $status){
     //Quelle: https://www.w3schools.com/js/js_json_php.asp
     $stockArray = json_decode($stock);
 
-    //Reihenfolge der Objekte umkehren, damit sie nach foreach in der richtigen Reihenfolge kommen
-    //Quelle: https://www.w3schools.com/php/func_array_reverse.asp
-    $stockArray = array_reverse($stockArray);
+    //Objekte alphabetisch sortieren
+    //Quelle: https://stackoverflow.com/questions/4282413/sort-array-of-objects-by-object-fields
+    usort($stockArray, function($a, $b){
+        return strcmp($a->description, $b->description);
+    });
     
     //Alle Lagerorte durchgehen, Lagerort des Geräts auswählen und IDs als Value hinterlegen
     foreach($stockArray as $lagerorte){
