@@ -345,7 +345,7 @@ function postDetails($access_token, $serialId, $statusId, $lagerortId, $tagId, $
         curl_close($curl);
         //Ende Code-Snippet
         
-    }else{
+    }elseif($tagName!=""){
         //Tag existiert nicht, muss angelegt werden
         //Name erstellt einen neuen Tag 
         
@@ -362,6 +362,35 @@ function postDetails($access_token, $serialId, $statusId, $lagerortId, $tagId, $
           CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
           CURLOPT_CUSTOMREQUEST => "POST",
           CURLOPT_POSTFIELDS =>"{\r\n        \"id\": \"$serialId\",\r\n        \"warehouse\": {\r\n            \"id\": \"$statusId\"\r\n        },\r\n        \"closet\": {\r\n            \"id\": \"$lagerortId\"\r\n        },\r\n        \"tags\": [{\r\n        \t\"identity\": \"$tagName\"\r\n        }]\r\n    }",
+          CURLOPT_HTTPHEADER => array(
+            "Content-Type: application/json",
+            "Authorization: Bearer $access_token"
+          ),
+        ));
+
+        $response = curl_exec($curl);
+
+        curl_close($curl);
+        //Ende Code-Snippet
+    }else{
+        //Tag-Feld wurde leergelassen, muss für allfällige Änderungen am Status/Lagerort dem leeren Tag zugeordnet werden
+        
+        //ID des leeren Tags
+        $tagId = "d5ca2683-534e-411e-9a07-2654623cdca0";
+        
+        //Code-Snippet aus dem Postman
+        $curl = curl_init();
+
+        curl_setopt_array($curl, array(
+          CURLOPT_URL => "http://inventory-dashboard.iwc.com:8080//api/iwc/item",
+          CURLOPT_RETURNTRANSFER => true,
+          CURLOPT_ENCODING => "",
+          CURLOPT_MAXREDIRS => 10,
+          CURLOPT_TIMEOUT => 0,
+          CURLOPT_FOLLOWLOCATION => true,
+          CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+          CURLOPT_CUSTOMREQUEST => "POST",
+          CURLOPT_POSTFIELDS =>"{\r\n        \"id\": \"$serialId\",\r\n        \"warehouse\": {\r\n            \"id\": \"$statusId\"\r\n        },\r\n        \"closet\": {\r\n            \"id\": \"$lagerortId\"\r\n        },\r\n        \"tags\": [{\r\n        \t\"id\": \"$tagId\"\r\n        }]\r\n    }",
           CURLOPT_HTTPHEADER => array(
             "Content-Type: application/json",
             "Authorization: Bearer $access_token"
