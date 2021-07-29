@@ -137,7 +137,15 @@ if(!isset($_SESSION["access_token"])){
                 //Suchen-Button aktivieren
                 $("#suchen").on("click", function(){
                     //Funktion zur AJAX-Abfrage aufrufen
-                    getAsset();
+                    getAsset(false);
+                })
+                
+                //Suche mit Enter starten
+                $("#inputAsset").on("keyup", function(e){
+                    //Prüfen, ob Enter gedrückt wurde
+                    if(e.which == 13){
+                        getAsset(false);
+                    }
                 })
                 
                 <?php 

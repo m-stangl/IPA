@@ -74,7 +74,7 @@ function getDetails($access_token, $serialNr){
     $curl = curl_init();
 
     curl_setopt_array($curl, array(
-      CURLOPT_URL => "https://iwc.ios-business-apps.com/api/iwc/serial/$serialNr",
+      CURLOPT_URL => "http://inventory-dashboard.iwc.com:8080/api/iwc/serial/$serialNr",
       CURLOPT_RETURNTRANSFER => true,
       CURLOPT_ENCODING => "",
       CURLOPT_MAXREDIRS => 10,
@@ -145,7 +145,7 @@ function getDetails($access_token, $serialNr){
         $curl = curl_init();
 
         curl_setopt_array($curl, array(
-          CURLOPT_URL => "https://iwc.ios-business-apps.com/api/iwc/area",
+          CURLOPT_URL => "http://inventory-dashboard.iwc.com:8080/api/iwc/area",
           CURLOPT_RETURNTRANSFER => true,
           CURLOPT_ENCODING => "",
           CURLOPT_MAXREDIRS => 10,
@@ -196,7 +196,7 @@ function getDetails($access_token, $serialNr){
         $curl = curl_init();
 
         curl_setopt_array($curl, array(
-          CURLOPT_URL => "https://iwc.ios-business-apps.com/api/iwc/area/$stockName",
+          CURLOPT_URL => "http://inventory-dashboard.iwc.com:8080/api/iwc/area/$stockName",
           CURLOPT_RETURNTRANSFER => true,
           CURLOPT_ENCODING => "",
           CURLOPT_MAXREDIRS => 10,
@@ -218,9 +218,11 @@ function getDetails($access_token, $serialNr){
         //Quelle: https://www.w3schools.com/js/js_json_php.asp
         $stockArray = json_decode($stock);
         
-        //Reihenfolge der Objekte umkehren, damit sie nach foreach in der richtigen Reihenfolge kommen
-        //Quelle: https://www.w3schools.com/php/func_array_reverse.asp
-        $stockArray = array_reverse($stockArray);
+        //Objekte alphabetisch sortieren
+        //Quelle: https://stackoverflow.com/questions/4282413/sort-array-of-objects-by-object-fields
+        usort($stockArray, function($a, $b){
+            return strcmp($a->description, $b->description);
+        });
         
         //Alle Lagerorte durchgehen, Lagerort des Geräts auswählen und IDs als Value hinterlegen
         foreach($stockArray as $lagerorte){
@@ -289,7 +291,7 @@ function postDetails($access_token, $serialId, $statusId, $lagerortId, $tagId, $
     $curl = curl_init();
 
     curl_setopt_array($curl, array(
-      CURLOPT_URL => "https://iwc.ios-business-apps.com/api/iwc/tag/$tagName",
+      CURLOPT_URL => "http://inventory-dashboard.iwc.com:8080/api/iwc/tag/$tagName",
       CURLOPT_RETURNTRANSFER => true,
       CURLOPT_ENCODING => "",
       CURLOPT_MAXREDIRS => 10,
@@ -323,7 +325,7 @@ function postDetails($access_token, $serialId, $statusId, $lagerortId, $tagId, $
         $curl = curl_init();
 
         curl_setopt_array($curl, array(
-          CURLOPT_URL => "https://iwc.ios-business-apps.com/api/iwc/item",
+          CURLOPT_URL => "http://inventory-dashboard.iwc.com:8080/api/iwc/item",
           CURLOPT_RETURNTRANSFER => true,
           CURLOPT_ENCODING => "",
           CURLOPT_MAXREDIRS => 10,
@@ -343,7 +345,7 @@ function postDetails($access_token, $serialId, $statusId, $lagerortId, $tagId, $
         curl_close($curl);
         //Ende Code-Snippet
         
-    }else{
+    }elseif($tagName!=""){
         //Tag existiert nicht, muss angelegt werden
         //Name erstellt einen neuen Tag 
         
@@ -351,7 +353,7 @@ function postDetails($access_token, $serialId, $statusId, $lagerortId, $tagId, $
         $curl = curl_init();
 
         curl_setopt_array($curl, array(
-          CURLOPT_URL => "https://iwc.ios-business-apps.com/api/iwc/item",
+          CURLOPT_URL => "http://inventory-dashboard.iwc.com:8080/api/iwc/item",
           CURLOPT_RETURNTRANSFER => true,
           CURLOPT_ENCODING => "",
           CURLOPT_MAXREDIRS => 10,
@@ -360,6 +362,35 @@ function postDetails($access_token, $serialId, $statusId, $lagerortId, $tagId, $
           CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
           CURLOPT_CUSTOMREQUEST => "POST",
           CURLOPT_POSTFIELDS =>"{\r\n        \"id\": \"$serialId\",\r\n        \"warehouse\": {\r\n            \"id\": \"$statusId\"\r\n        },\r\n        \"closet\": {\r\n            \"id\": \"$lagerortId\"\r\n        },\r\n        \"tags\": [{\r\n        \t\"identity\": \"$tagName\"\r\n        }]\r\n    }",
+          CURLOPT_HTTPHEADER => array(
+            "Content-Type: application/json",
+            "Authorization: Bearer $access_token"
+          ),
+        ));
+
+        $response = curl_exec($curl);
+
+        curl_close($curl);
+        //Ende Code-Snippet
+    }else{
+        //Tag-Feld wurde leergelassen, muss für allfällige Änderungen am Status/Lagerort dem leeren Tag zugeordnet werden
+        
+        //ID des leeren Tags
+        $tagId = "d5ca2683-534e-411e-9a07-2654623cdca0";
+        
+        //Code-Snippet aus dem Postman
+        $curl = curl_init();
+
+        curl_setopt_array($curl, array(
+          CURLOPT_URL => "http://inventory-dashboard.iwc.com:8080/api/iwc/item",
+          CURLOPT_RETURNTRANSFER => true,
+          CURLOPT_ENCODING => "",
+          CURLOPT_MAXREDIRS => 10,
+          CURLOPT_TIMEOUT => 0,
+          CURLOPT_FOLLOWLOCATION => true,
+          CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+          CURLOPT_CUSTOMREQUEST => "POST",
+          CURLOPT_POSTFIELDS =>"{\r\n        \"id\": \"$serialId\",\r\n        \"warehouse\": {\r\n            \"id\": \"$statusId\"\r\n        },\r\n        \"closet\": {\r\n            \"id\": \"$lagerortId\"\r\n        },\r\n        \"tags\": [{\r\n        \t\"id\": \"$tagId\"\r\n        }]\r\n    }",
           CURLOPT_HTTPHEADER => array(
             "Content-Type: application/json",
             "Authorization: Bearer $access_token"
@@ -388,7 +419,7 @@ function updateStock($access_token, $status){
     $curl = curl_init();
 
     curl_setopt_array($curl, array(
-      CURLOPT_URL => "https://iwc.ios-business-apps.com/api/iwc/area/$status",
+      CURLOPT_URL => "http://inventory-dashboard.iwc.com:8080/api/iwc/area/$status",
       CURLOPT_RETURNTRANSFER => true,
       CURLOPT_ENCODING => "",
       CURLOPT_MAXREDIRS => 10,
@@ -410,9 +441,11 @@ function updateStock($access_token, $status){
     //Quelle: https://www.w3schools.com/js/js_json_php.asp
     $stockArray = json_decode($stock);
 
-    //Reihenfolge der Objekte umkehren, damit sie nach foreach in der richtigen Reihenfolge kommen
-    //Quelle: https://www.w3schools.com/php/func_array_reverse.asp
-    $stockArray = array_reverse($stockArray);
+    //Objekte alphabetisch sortieren
+    //Quelle: https://stackoverflow.com/questions/4282413/sort-array-of-objects-by-object-fields
+    usort($stockArray, function($a, $b){
+        return strcmp($a->description, $b->description);
+    });
     
     //Alle Lagerorte durchgehen, Lagerort des Geräts auswählen und IDs als Value hinterlegen
     foreach($stockArray as $lagerorte){
@@ -433,7 +466,7 @@ function getAsset($access_token, $assetNr){
     $curl = curl_init();
 
     curl_setopt_array($curl, array(
-      CURLOPT_URL => "https://iwc.ios-business-apps.com/api/iwc/report/asset/$assetNr",
+      CURLOPT_URL => "http://inventory-dashboard.iwc.com:8080/api/iwc/report/asset/$assetNr",
       CURLOPT_RETURNTRANSFER => true,
       CURLOPT_ENCODING => "",
       CURLOPT_MAXREDIRS => 10,
@@ -495,8 +528,8 @@ function getAsset($access_token, $assetNr){
             //Jedes Gerät vom Status "IT" auslesen
             //Quelle: https://www.w3schools.com/php/php_looping_foreach.asp
             foreach($assetArray->articlesIt as $value){
-                $antwort .=     '<td><a href="links.php?serialNr=' . $value->serialNumber . '">' . $value->serialNumber . '</a></td>';
-                $antwort .=     '<td class="text-right">' . $value->master->description . '</td>';
+                $antwort .=     '<tr><td><a href="links.php?serialNr=' . $value->serialNumber . '">' . $value->serialNumber . '</a></td>';
+                $antwort .=     '<td class="text-right">' . $value->master->description . '</td></tr>';
             }
             $antwort .=     '</tbody>';
             $antwort .= '</table><br>';
@@ -519,8 +552,8 @@ function getAsset($access_token, $assetNr){
             //Jedes Gerät vom Status "Extern" auslesen
             //Quelle: https://www.w3schools.com/php/php_looping_foreach.asp
             foreach($assetArray->articlesExtern as $value){
-                $antwort .=     '<td><a href="links.php?serialNr=' . $value->serialNumber . '">' . $value->serialNumber . '</a></td>';
-                $antwort .=     '<td class="text-right">' . $value->master->description . '</td>';
+                $antwort .=     '<tr><td><a href="links.php?serialNr=' . $value->serialNumber . '">' . $value->serialNumber . '</a></td>';
+                $antwort .=     '<td class="text-right">' . $value->master->description . '</td></tr>';
             }
             $antwort .=     '</tbody>';
             $antwort .= '</table><br>';
@@ -543,8 +576,8 @@ function getAsset($access_token, $assetNr){
             //Jedes Gerät vom Status "IWC" auslesen
             //Quelle: https://www.w3schools.com/php/php_looping_foreach.asp
             foreach($assetArray->articlesIwc as $value){
-                $antwort .=     '<td><a href="links.php?serialNr=' . $value->serialNumber . '">' . $value->serialNumber . '</a></td>';
-                $antwort .=     '<td class="text-right">' . $value->master->description . '</td>';
+                $antwort .=     '<tr><td><a href="links.php?serialNr=' . $value->serialNumber . '">' . $value->serialNumber . '</a></td>';
+                $antwort .=     '<td class="text-right">' . $value->master->description . '</td></tr>';
             }
             $antwort .=     '</tbody>';
             $antwort .= '</table><br>';
@@ -579,7 +612,7 @@ function getReport($access_token){
     $curl = curl_init();
 
     curl_setopt_array($curl, array(
-      CURLOPT_URL => "https://iwc.ios-business-apps.com/api/iwc/report/external",
+      CURLOPT_URL => "http://inventory-dashboard.iwc.com:8080/api/iwc/report/external",
       CURLOPT_RETURNTRANSFER => true,
       CURLOPT_ENCODING => "",
       CURLOPT_MAXREDIRS => 10,
