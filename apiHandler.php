@@ -64,6 +64,19 @@ if (isset($_POST["task"]) && $_POST["task"] == "getDetails") {
 
   //getTags ausführen mit dem Argument "access_token" und "tagNr"
   getTags($access_token, $tagNr);
+} elseif (isset($_POST["task"]) && $_POST["task"] == "deleteDevice") {
+
+  //serialId auslesen, damit sie der Funktion übergeben werden kann
+  $serialId = $_POST["serialId"];
+
+  //deleteDevice ausführen mit dem Argument "access_token" und "serialId"
+  deleteDevice($access_token, $serialId);
+} elseif (isset($_POST["task"]) && $_POST["task"] == "getModels") {
+  //getModels ausführen mit dem Argument "access_token"
+  getModels($access_token);
+} elseif (isset($_POST["task"]) && $_POST["task"] == "getStati") {
+  //getStati ausführen mit dem Argument "access_token"
+  getStati($access_token);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////
@@ -258,12 +271,13 @@ function getDetails($access_token, $serialNr)
 
     $antwort .=                 '</div>';
     $antwort .=             '</div><br>';
-    //Zeile für den Button
-    //Button nur einfügen, wenn die Rolle des Benutzers admin oder manager ist
+    //Zeile für den Buttons
+    //Buttons nur einfügen, wenn die Rolle des Benutzers admin oder manager ist
     if ($_SESSION['role'] == "admin" or $_SESSION['role'] == "manager") {
       $antwort .=             '<div class="row">';
       $antwort .=                 '<div class="col" style="text-align:center">';
       $antwort .=                     '<button type="button" class="btn btn-primary" id="speichern">Speichern</button>';
+      $antwort .=                     '<button type="button" class="btn btn-primary" id="loeschen">Gerät löschen</button>';
       $antwort .=                 '</div>';
       $antwort .=             '</div>';
     }
@@ -707,21 +721,361 @@ function getReport($access_token)
 function getTags($access_token, $tagNr)
 {
 
-  //Alle Tags abrufen
+  if ($tagNr !== "") {
+    //Gesuchter Tag anzeigen
+
+
+    //Code-Snippet aus dem Postman
+    $curl = curl_init();
+
+    curl_setopt_array($curl, array(
+      CURLOPT_URL => "http://inventory-dashboard.iwc.com:8080/api/iwc/tag/$tagNr",
+      CURLOPT_RETURNTRANSFER => true,
+      CURLOPT_ENCODING => "",
+      CURLOPT_MAXREDIRS => 10,
+      CURLOPT_TIMEOUT => 0,
+      CURLOPT_FOLLOWLOCATION => true,
+      CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+      CURLOPT_CUSTOMREQUEST => "GET",
+      CURLOPT_HTTPHEADER => array(
+        "Authorization: Bearer $access_token"
+      ),
+    ));
+
+    $response = curl_exec($curl);
+
+    curl_close($curl);
+    //Ende vom Code-Snippet
+
+    //JSON-Objekt in ein PHP-Array umwandeln
+    //Quelle: https://www.w3schools.com/js/js_json_php.asp
+    $responseObject = json_decode($response);
+    //TagId heraussuchen
+    //$identities = array_column($responseArray, 'identity');
+    //$key = array_search($tagNr, $identities);
+
+    if (isset($responseObject->id)) {
+      //Tag existiert, prüfen ob er an einem Gerät angehängt wurde
+      if ($responseObject->item !== null) {
+        //Tag existiert und hängt an einem Gerät
+
+        //zweiter Request um mehr Infos zum Gerät zu erhalten
+        //Code-Snippet aus dem Postman
+        $curl = curl_init();
+
+        curl_setopt_array($curl, array(
+          CURLOPT_URL => "http://inventory-dashboard.iwc.com:8080/api/iwc/items",
+          CURLOPT_RETURNTRANSFER => true,
+          CURLOPT_ENCODING => "",
+          CURLOPT_MAXREDIRS => 10,
+          CURLOPT_TIMEOUT => 0,
+          CURLOPT_FOLLOWLOCATION => true,
+          CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+          CURLOPT_CUSTOMREQUEST => "GET",
+          CURLOPT_HTTPHEADER => array(
+            "Authorization: Bearer $access_token"
+          ),
+        ));
+
+        $items = curl_exec($curl);
+
+        curl_close($curl);
+        //Ende vom Code-Snippet
+
+        //JSON-Objekt in ein PHP-Array umwandeln
+        //Quelle: https://www.w3schools.com/js/js_json_php.asp
+        $itemsArray = json_decode($items);
+        $tagsInItemsArray = array_column($itemsArray, "tags");
+        /* echo var_dump($tagsInItemsArray);
+        die(); */
+
+
+
+        //So en müll
+        //No touchy
+        foreach ($tagsInItemsArray as $key => $testArray) {
+
+          if (isset($testArray[0]->id)) {
+            //echo var_dump($testArray[0]->id) . " ";
+            if ($testArray[0]->id === $responseObject->id) {
+              $derWert = $key;
+            }
+          }
+        }
+
+
+        //Antwort aufbauen
+        //Quelle: https://www.w3schools.com/php/php_operators.asp
+        $antwort  = '<div class="col-md-2"></div>';
+        $antwort .= '<div class="col-md-8">';
+        $antwort .=     '<div class="card">';
+        $antwort .=         '<div class="card-header card-header-text card-header-primary">';
+        $antwort .=             '<div class="card-text">';
+        $antwort .=                 '<h4 class="card-title" data-tag="' . $responseObject->id . '" id="derTag" data-tagname="' . $responseObject->identity . '">' . $responseObject->identity . '</h4>';
+        $antwort .=             '</div>';
+        $antwort .=         '</div>';
+        $antwort .=         '<div class="card-body"><br>';
+        //Erste Zeile
+        $antwort .=             '<div class="row">';
+        $antwort .=                 '<div class="col-md-4">';
+        $antwort .=                     '<p>Seriennummer: </p>';
+        $antwort .=                 '</div>';
+        $antwort .=                 '<div class="col-md-4"><a href="links.php?serialNr=' . $itemsArray[$derWert]->serialNumber . '" id="serialId" data-serial="' . $itemsArray[$derWert]->id . '">';
+        $antwort .=                   $itemsArray[$derWert]->serialNumber;
+        $antwort .=                 '</a></div>';
+        $antwort .=                 '<div class="col-md-4">';
+        $antwort .=                 '</div>';
+        $antwort .=             '</div>';
+        //Zweite Zeile
+        $antwort .=             '<div class="row">';
+        $antwort .=                 '<div class="col-md-4">';
+        $antwort .=                     '<p>Bezeichnung: </p>';
+        $antwort .=                 '</div>';
+        $antwort .=                 '<div class="col-md-4">';
+        $antwort .=                   $responseObject->item->masterItem->description;
+        $antwort .=                 '</div>';
+        $antwort .=                 '<div class="col-md-4">';
+        $antwort .=                 '</div>';
+        $antwort .=             '</div>';
+        //Dritte Zeile
+        $antwort .=             '<div class="row">';
+        $antwort .=                 '<div class="col-md-4">';
+        $antwort .=                     '<p>Anlagenummer: </p>';
+        $antwort .=                 '</div>';
+        $antwort .=                 '<div class="col-md-4"><a href="links.php?assetNr=' . $itemsArray[$derWert]->assetNumber . '">';
+        $antwort .=                   $itemsArray[$derWert]->assetNumber;
+        $antwort .=                 '</a></div>';
+        $antwort .=             '</div>';
+        //Vierte Zeile
+        $antwort .=             '<div class="row">';
+        $antwort .=                 '<div class="col-md-4">';
+        $antwort .=                     '<p>Status: </p>';
+        $antwort .=                 '</div>';
+        $antwort .=                 '<div class="col-md-4">';
+        $antwort .=                     '<select id="inputStatus" class="form-control">';
+
+        //Alle Stati auslesen
+
+        //Code-Snippet aus dem Postman
+        $curl = curl_init();
+
+        curl_setopt_array($curl, array(
+          CURLOPT_URL => "http://inventory-dashboard.iwc.com:8080/api/iwc/area",
+          CURLOPT_RETURNTRANSFER => true,
+          CURLOPT_ENCODING => "",
+          CURLOPT_MAXREDIRS => 10,
+          CURLOPT_TIMEOUT => 0,
+          CURLOPT_FOLLOWLOCATION => true,
+          CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+          CURLOPT_CUSTOMREQUEST => "GET",
+          CURLOPT_HTTPHEADER => array(
+            "Authorization: Bearer $access_token"
+          ),
+        ));
+
+        $stati = curl_exec($curl);
+
+        curl_close($curl);
+        //Ende vom Code-Snippet
+
+        //JSON-Objekt in ein PHP-Array umwandeln
+        //Quelle: https://www.w3schools.com/js/js_json_php.asp
+        $statiArray = json_decode($stati);
+
+        //Alle Stati durchgehen, Status des Geräts auswählen und IDs als Value hinterlegen
+        foreach ($statiArray as $status) {
+          if ($itemsArray[$derWert]->warehouse->id == $status->id) {
+            $antwort .= "<option value='" . $status->id . "' selected>" . $status->description . "</option>";
+          } else {
+            $antwort .= "<option value='" . $status->id . "'>" . $status->description . "</option>";
+          }
+        }
+
+        $antwort .=                     '</select>';
+        $antwort .=                 '</div>';
+        $antwort .=             '</div><br>';
+
+        //Fünfte Zeile
+        $antwort .=             '<div class="row">';
+        $antwort .=                 '<div class="col-md-4">';
+        $antwort .=                     '<p>Lagerort: </p>';
+        $antwort .=                 '</div>';
+        $antwort .=                 '<div class="col-md-4">';
+        $antwort .=                     '<select id="inputLagerort" class="form-control">';
+
+        //Lagerorte zum Status auslesen
+
+        //Lagerortsname in passende Form bringen
+        $stockName = $itemsArray[$derWert]->warehouse->description;
+
+        //Code-Snippet aus dem Postman
+        $curl = curl_init();
+
+        curl_setopt_array($curl, array(
+          CURLOPT_URL => "http://inventory-dashboard.iwc.com:8080/api/iwc/area/$stockName",
+          CURLOPT_RETURNTRANSFER => true,
+          CURLOPT_ENCODING => "",
+          CURLOPT_MAXREDIRS => 10,
+          CURLOPT_TIMEOUT => 0,
+          CURLOPT_FOLLOWLOCATION => true,
+          CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+          CURLOPT_CUSTOMREQUEST => "GET",
+          CURLOPT_HTTPHEADER => array(
+            "Authorization: Bearer $access_token"
+          ),
+        ));
+
+        $stock = curl_exec($curl);
+
+        curl_close($curl);
+        //Ende vom Code-Snippet
+
+        //JSON-Objekt in ein PHP-Array umwandeln
+        //Quelle: https://www.w3schools.com/js/js_json_php.asp
+        $stockArray = json_decode($stock);
+
+        //Objekte alphabetisch sortieren
+        //Quelle: https://stackoverflow.com/questions/4282413/sort-array-of-objects-by-object-fields
+        usort($stockArray, function ($a, $b) {
+          return strcmp($a->description, $b->description);
+        });
+
+        //Alle Lagerorte durchgehen, Lagerort des Geräts auswählen und IDs als Value hinterlegen
+        foreach ($stockArray as $lagerorte) {
+          if ($itemsArray[$derWert]->closet->id == $lagerorte->id) {
+            $antwort .= "<option value='" . $lagerorte->id . "' selected>" . $lagerorte->description . "</option>";
+          } else {
+            $antwort .= "<option value='" . $lagerorte->id . "'>" . $lagerorte->description . "</option>";
+          }
+        }
+
+        $antwort .=                     '</select>';
+        $antwort .=                 '</div>';
+        $antwort .=             '</div><br>';
+
+        //Zeile für den Buttons
+        //Buttons nur einfügen, wenn die Rolle des Benutzers admin oder manager ist
+        if ($_SESSION['role'] == "admin" or $_SESSION['role'] == "manager") {
+          $antwort .=             '<div class="row">';
+          $antwort .=                 '<div class="col" style="text-align:center">';
+          $antwort .=                     '<button type="button" class="btn btn-primary" id="speichern">Speichern</button>';
+          $antwort .=                     '<button type="button" class="btn btn-primary" id="loeschen">Gerät löschen</button>';
+          $antwort .=                 '</div>';
+          $antwort .=             '</div>';
+        }
+
+        //Card schliessen
+        $antwort .=         '</div>';
+        $antwort .=     '</div>';
+        $antwort .= '</div>';
+        $antwort .= '<div class="col-md-2"></div>';
+
+        //Antwort zurückschicken
+        echo $antwort;
+      } else {
+        //Tag ist erfasst aber noch nicht an einem Gerät
+        //TODO
+        echo "Der gesuchte Tag ist keinem Gerät zugewiesen";
+      }
+    } else {
+      //Tag wurde nicht gefunden
+      echo "Der gesuchte Tag existiert nicht";
+    }
+  } /* else {
+    //Alle Tags abrufen
+
+    //Code-Snippet aus dem Postman
+    $curl = curl_init();
+
+    curl_setopt_array($curl, array(
+      CURLOPT_URL => "http://inventory-dashboard.iwc.com:8080/api/iwc/tags",
+      CURLOPT_RETURNTRANSFER => true,
+      CURLOPT_ENCODING => "",
+      CURLOPT_MAXREDIRS => 10,
+      CURLOPT_TIMEOUT => 0,
+      CURLOPT_FOLLOWLOCATION => true,
+      CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+      CURLOPT_CUSTOMREQUEST => "GET",
+      CURLOPT_HTTPHEADER => array(
+        "Authorization: Bearer $access_token"
+      ),
+    ));
+
+    $response = curl_exec($curl);
+
+    curl_close($curl);
+    //Ende vom Code-Snippet
+
+    //JSON-Objekt in ein PHP-Array umwandeln
+    //Quelle: https://www.w3schools.com/js/js_json_php.asp
+    $responseArray = json_decode($response);
+
+    //Prüfen, ob nach einer Tag-Nummer gesucht wurde oder alle angezeigt werden sollen
+    if ($tagNr == "") {
+      //Alle Tags auflisten
+
+      //Antwort aufbauen
+      //Quelle: https://www.w3schools.com/php/php_operators.asp
+      $antwort  = '<div class="col-md-2"></div>';
+      $antwort .= '<div class="col-md-8">';
+      $antwort .=     '<div class="card">';
+      $antwort .=         '<div class="card-header card-header-text card-header-primary">';
+      $antwort .=             '<div class="card-text">';
+      $antwort .=                 '<h4 class="card-title">RFID-Tags</h4>';
+      $antwort .=             '</div>';
+      $antwort .=         '</div>';
+      $antwort .=         '<div class="card-body"><br>';
+
+      //Tabelle erstellen
+      $antwort .=           '<table class="table">';
+      $antwort .=             '<thead>';
+      $antwort .=               '<th>Identity</th>';
+      $antwort .=               '<th class="text-right">id</th>';
+      $antwort .=             '</thead>';
+      $antwort .=             '<tbody>';
+
+      //Alle Tag-Nummern auflisten
+      //Quelle: https://www.w3schools.com/php/php_looping_foreach.asp
+      foreach (array_slice($responseArray, 1) as $tagInfos) {
+        $antwort .=     '<tr><td>' . $tagInfos->identity . '</td>';
+        $antwort .=     '<td class="text-right">' . $tagInfos->id . '</td></tr>';
+      }
+      $antwort .=     '</tbody>';
+      $antwort .= '</table><br>';
+
+      //Card schliessen
+      $antwort .=         '</div>';
+      $antwort .=     '</div>';
+      $antwort .= '</div>';
+      $antwort .= '<div class="col-md-2"></div>';
+
+      //Antwort zurückschicken
+      echo $antwort;
+    }
+  } */
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////
+////    FUNKTION DELETEDEVICE                                                              //
+/////////////////////////////////////////////////////////////////////////////////////////////
+function deleteDevice($access_token, $serialId)
+{
+  //Löscht ein Gerät basierend auf UUID
 
   //Code-Snippet aus dem Postman
   $curl = curl_init();
 
   curl_setopt_array($curl, array(
-    CURLOPT_URL => "http://inventory-dashboard.iwc.com:8080/api/iwc/tags",
+    CURLOPT_URL => "http://inventory-dashboard.iwc.com:8080/api/iwc/item/$serialId",
     CURLOPT_RETURNTRANSFER => true,
-    CURLOPT_ENCODING => "",
+    CURLOPT_ENCODING => '',
     CURLOPT_MAXREDIRS => 10,
     CURLOPT_TIMEOUT => 0,
     CURLOPT_FOLLOWLOCATION => true,
     CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-    CURLOPT_CUSTOMREQUEST => "GET",
+    CURLOPT_CUSTOMREQUEST => 'DELETE',
     CURLOPT_HTTPHEADER => array(
+      "Content-Type: application/json",
       "Authorization: Bearer $access_token"
     ),
   ));
@@ -731,85 +1085,71 @@ function getTags($access_token, $tagNr)
   curl_close($curl);
   //Ende vom Code-Snippet
 
+  if ($response == 1) {
+    echo "Das Gerät wurde erfolgreich gelöscht";
+  } else {
+    echo "Es ist ein Fehler aufgetreten: $response";
+  }
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////
+////    FUNKTION GETMODELS                                                                 //
+/////////////////////////////////////////////////////////////////////////////////////////////
+function getModels($access_token)
+{
+  $curl = curl_init();
+
+  curl_setopt_array($curl, array(
+    CURLOPT_URL => 'http://inventory-dashboard.iwc.com:8080/api/dashboard/items',
+    CURLOPT_RETURNTRANSFER => true,
+    CURLOPT_ENCODING => '',
+    CURLOPT_MAXREDIRS => 10,
+    CURLOPT_TIMEOUT => 0,
+    CURLOPT_FOLLOWLOCATION => true,
+    CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+    CURLOPT_CUSTOMREQUEST => 'GET',
+    CURLOPT_HTTPHEADER => array(
+      "Authorization: Bearer $access_token"
+    ),
+  ));
+
+  $response = curl_exec($curl);
+
+  curl_close($curl);
+
   //JSON-Objekt in ein PHP-Array umwandeln
   //Quelle: https://www.w3schools.com/js/js_json_php.asp
   $responseArray = json_decode($response);
+  echo json_encode(array_combine(array_column($responseArray->rows, "id"), array_column($responseArray->rows, "description")));
+}
 
-  //Prüfen, ob nach einer Tag-Nummer gesucht wurde oder alle angezeigt werden sollen
-  if ($tagNr == "") {
-    //Alle Tags auflisten
+/////////////////////////////////////////////////////////////////////////////////////////////
+////    FUNKTION GETSTATI                                                                  //
+/////////////////////////////////////////////////////////////////////////////////////////////
+function getStati($access_token)
+{
+  $curl = curl_init();
 
-    //Antwort aufbauen
-    //Quelle: https://www.w3schools.com/php/php_operators.asp
-    $antwort  = '<div class="col-md-2"></div>';
-    $antwort .= '<div class="col-md-8">';
-    $antwort .=     '<div class="card">';
-    $antwort .=         '<div class="card-header card-header-text card-header-primary">';
-    $antwort .=             '<div class="card-text">';
-    $antwort .=                 '<h4 class="card-title">RFID-Tags</h4>';
-    $antwort .=             '</div>';
-    $antwort .=         '</div>';
-    $antwort .=         '<div class="card-body"><br>';
+  curl_setopt_array($curl, array(
+    CURLOPT_URL => 'http://inventory-dashboard.iwc.com:8080/api/iwc/area',
+    CURLOPT_RETURNTRANSFER => true,
+    CURLOPT_ENCODING => '',
+    CURLOPT_MAXREDIRS => 10,
+    CURLOPT_TIMEOUT => 0,
+    CURLOPT_FOLLOWLOCATION => true,
+    CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+    CURLOPT_CUSTOMREQUEST => 'GET',
+    CURLOPT_HTTPHEADER => array(
+      "Authorization: Bearer $access_token"
+    ),
+  ));
 
-    //Tabelle erstellen
-    $antwort .=           '<table class="table">';
-    $antwort .=             '<thead>';
-    $antwort .=               '<th>Identity</th>';
-    $antwort .=               '<th class="text-right">id</th>';
-    $antwort .=             '</thead>';
-    $antwort .=             '<tbody>';
+  $response = curl_exec($curl);
 
-    //Alle Tag-Nummern auflisten
-    //Quelle: https://www.w3schools.com/php/php_looping_foreach.asp
-    foreach (array_slice($responseArray, 1) as $tagInfos) {
-      $antwort .=     '<tr><td>' . $tagInfos->identity . '</td>';
-      $antwort .=     '<td class="text-right">' . $tagInfos->id . '</td></tr>';
-    }
-    $antwort .=     '</tbody>';
-    $antwort .= '</table><br>';
+  curl_close($curl);
 
-    //Card schliessen
-    $antwort .=         '</div>';
-    $antwort .=     '</div>';
-    $antwort .= '</div>';
-    $antwort .= '<div class="col-md-2"></div>';
-
-    //Antwort zurückschicken
-    echo $antwort;
-  } elseif ($tagNr != "") {
-    //Gesuchter Tag anzeigen
-
-    //TagId heraussuchen
-    $identities = array_column($responseArray, 'identity');
-    $key = array_search($tagNr, $identities);
-    if ($key) {
-      //Antwort aufbauen
-      //Quelle: https://www.w3schools.com/php/php_operators.asp
-      $antwort  = '<div class="col-md-2"></div>';
-      $antwort .= '<div class="col-md-8">';
-      $antwort .=     '<div class="card">';
-      $antwort .=         '<div class="card-header card-header-text card-header-primary">';
-      $antwort .=             '<div class="card-text">';
-      $antwort .=                 '<h4 class="card-title" data-tag="' . "hier kommt tagID hin" . '" id="TagId">' . $responseArray[$key]->identity . '</h4>';
-      $antwort .=             '</div>';
-      $antwort .=         '</div>';
-      $antwort .=         '<div class="card-body"><br>';
-      //Erste Zeile
-      $antwort .=             '<div class="row">';
-      $antwort .=                 '<h4>';
-      $antwort .=                   $responseArray[$key]->id;
-      $antwort .=                 '</h4>';
-      $antwort .=             '</div>';
-      //Card schliessen
-      $antwort .=         '</div>';
-      $antwort .=     '</div>';
-      $antwort .= '</div>';
-      $antwort .= '<div class="col-md-2"></div>';
-
-      //Antwort zurückschicken
-      echo $antwort;
-    } else {
-      echo "Der gesuchte Tag existiert nicht";
-    }
-  }
+  //JSON-Objekt in ein PHP-Array umwandeln
+  //Quelle: https://www.w3schools.com/js/js_json_php.asp
+  $responseArray = json_decode($response);
+  echo json_encode(array_combine(array_column($responseArray, "id"), array_column($responseArray, "description")));
 }

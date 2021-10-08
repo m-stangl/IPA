@@ -146,9 +146,6 @@ if (!isset($_SESSION["access_token"])) {
       if (isset($_SESSION['tagNr'])) {
         //Funktion ausführen mit true als Argument
         echo "getTags(true)";
-      } else {
-        //Seite wurde ohne Link aufgerufen, daher alle Tags anzeigen
-        echo "getTags(false)";
       }
       ?>
 
@@ -187,18 +184,124 @@ if (!isset($_SESSION["access_token"])) {
           success: function(response) {
             //War die Übertragung erfolgreich, wird folgender Code ausgeführt
 
+            console.log(response);
             //Prüfen, ob Suche erfolgreich war
-            if (response == "Der gesuchte Tag existiert nicht") {
+            if (response.charAt(0) !== "<") {
               alert(response);
+            } else {
+              //Antwort anzeigen
+              $('#details').html(response);
+              //console.log(response);
+
+              //Speichern-Button aktivieren
+              $('#speichern').on('click', function() {
+                //Speichern einleiten
+                postDetails();
+              })
+
+              //Löschen-Button aktivieren
+              $('#loeschen').on('click', function() {
+                if (confirm('Das Gerät wird gelöscht und kann nicht wiederhergestellt werden. Fortfahren?')) {
+                  //Löschen einleiten
+                  deleteDevice();
+                }
+
+              })
+
+              //Überprüfe, wann sich der Status ändert
+              $('#inputStatus').on("change", function() {
+                //Status hat sich geändert, Lagerorte müssen neu ausgelesen werden
+
+                //Lese Status-Name, nicht ID!, aus dem Formular
+                //Quelle: https://stackoverflow.com/questions/6454016/get-text-of-the-selected-option-with-jquery/6454073
+                var status = $('#inputStatus option:selected').html();
+
+                //AJAX-Request an apiHandler.php
+                //Quelle: Schulprojekt "Waluegemer" => https://waluegemer.derbeton.ch/
+                $.ajax({
+                  type: 'post',
+                  url: 'apiHandler.php',
+                  data: {
+                    //Details und Aufgabe für apiHandler mitschicken
+                    status: status,
+                    task: 'updateStock',
+                  },
+                  success: function(response) {
+                    //War die Übertragung erfolgreich, wird folgender Code ausgeführt
+
+                    //Select-Option Elemente ersetzen
+                    $("#inputLagerort").html(response);
+
+                  }
+                });
+              })
             }
 
-            //Antwort anzeigen
-            $('#details').html(response);
-            //console.log(response);
 
-            //TODO
           }
         });
+      }
+
+      //Funktion speichert Details der Seriennummer
+      function postDetails() {
+
+        //Details auslesen
+        //Quelle: https://johannesdienst.net/jquery-data-attribute-auslesen/
+        var serialId = $('#serialId').data('serial');
+        var statusId = $('#inputStatus').val();
+        var lagerortId = $('#inputLagerort').val();
+
+        //RFID-Tag auslesen, ID und Name
+        var tagId = $('#derTag').data('tag');
+        var tagName = $('#derTag').data('tagname');
+
+        //AJAX-Request an apiHandler.php
+        //Quelle: Schulprojekt "Waluegemer" => https://waluegemer.derbeton.ch/
+        $.ajax({
+          type: 'post',
+          url: 'apiHandler.php',
+          data: {
+            //Details und Aufgabe für apiHandler mitschicken
+            serialId: serialId,
+            statusId: statusId,
+            lagerortId: lagerortId,
+            tagId: tagId,
+            tagName: tagName,
+            task: 'postDetails',
+          },
+          success: function(response) {
+            //War die Übertragung erfolgreich, wird folgender Code ausgeführt
+
+            //Kurze Meldung geben, dass es geklappt hat
+            alert(response);
+
+          }
+        });
+      }
+
+      //Funktion löscht das Gerät komplett
+      function deleteDevice() {
+
+        //SerialID auslesen
+        var serialId = $('#serialId').data('serial');
+
+        //AJAX-Request an apiHandler.php
+        //Quelle: Schulprojekt "Waluegemer" => https://waluegemer.derbeton.ch/
+        $.ajax({
+          type: 'post',
+          url: 'apiHandler.php',
+          data: {
+            //Details und Aufgabe für apiHandler mitschicken
+            serialId: serialId,
+            task: 'deleteDevice',
+          },
+          success: function(response) {
+            //War die Übertragung erfolgreich, wird folgender Code ausgeführt
+            //Kurze Meldung geben, dass es geklappt hat
+            alert(response);
+          }
+        });
+
       }
     })
   </script>
